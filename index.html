@@ -73,7 +73,7 @@ body{overflow-x:hidden}
 .card.history-card{border-color:#fff;box-shadow:inset 0 0 0 3px #fff}.card.history-card:after{content:"선택됨";position:absolute;top:7px;right:7px;padding:4px 7px;border-radius:999px;background:#0d1014e6;color:#fff;font-size:9px;font-weight:950;box-shadow:0 2px 8px #0008}.card.unavailable{opacity:1;cursor:not-allowed;filter:none}.card.unavailable:hover{border-color:#fff;transform:none}
 .quiz-choice{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:50px}.quiz-choice:not(:disabled):hover{border-color:#fff;background:#303641}.quiz-choice:disabled{cursor:default}.quiz-choice.locked{opacity:.48}.quiz-choice.answer-correct{border-color:#45aa74;background:#143c2a;color:#c2f7d4;box-shadow:inset 0 0 0 2px #45aa74}.quiz-choice.answer-wrong{border-color:#dc5a52;background:#421d1b;color:#ffd1cc;box-shadow:inset 0 0 0 2px #dc5a52}.quiz-choice-mark{display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;border-radius:50%;font:950 16px/1 Arial}.answer-correct .quiz-choice-mark{background:#45aa74;color:#fff}.answer-wrong .quiz-choice-mark{background:#dc5a52;color:#fff}
 .quiz-input-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto}.quiz-input-row input{width:100%}.quiz-input-row.correct input{border-color:#45aa74;background:#143c2a;color:#c2f7d4}.quiz-input-row.wrong input{border-color:#dc5a52;background:#421d1b;color:#ffd1cc}.quiz-input-mark{display:inline-flex;align-items:center;justify-content:center;width:46px;border-radius:11px;font:950 20px/1 Arial;color:#fff}.quiz-input-row.correct .quiz-input-mark{background:#45aa74}.quiz-input-row.wrong .quiz-input-mark{background:#dc5a52}.quiz-submit:disabled{opacity:.55;cursor:default}.quiz-result-title{display:flex;align-items:center;gap:9px}.quiz-result-symbol{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#ffffff22;font:950 16px/1 Arial}.quiz-editor-link{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;padding:9px 12px;border-radius:9px;background:#fff;color:#111;text-decoration:none;font-size:12px;font-weight:950}
-.team-left-name,.team-right-name{font-family:"Arial Black",Pretendard,"Noto Sans KR",sans-serif;font-weight:1000;-webkit-text-stroke:.8px currentColor;paint-order:stroke fill;letter-spacing:-.04em}.team-logo-cell{background:#111214}.team-logo-cell.empty:after{color:#70747b}.question-mark{background:#fff}.card.mystery-card img,.card.map-card.mystery-card img{background:#fff}
+.team-left-name,.team-right-name{font-family:"Arial Black",Pretendard,"Noto Sans KR",sans-serif;font-weight:1000;-webkit-text-stroke:.8px currentColor;paint-order:stroke fill;letter-spacing:-.04em}.team-logo-cell{background:#fff}.team-logo-cell.empty:after{color:#bbb}.question-mark{background:#fff}.card.mystery-card img,.card.map-card.mystery-card img{background:#fff}
 .preview-mode .topbar{display:none}.preview-mode .workspace{padding:22px 16px 30px;min-height:100vh;background:#202124;align-items:center;gap:20px}.preview-mode .quiz-panel.show{display:contents}.preview-mode .quiz-panel h2{order:-2;width:min(1100px,calc(100vw - 32px));margin:0 0 2px;text-align:center;font:1000 clamp(27px,4vw,46px)/1.15 "Arial Black",Pretendard,"Noto Sans KR",sans-serif;letter-spacing:-.045em;color:#fff}.preview-mode .stage{order:0}.preview-mode .quiz-options,.preview-mode .quiz-input-row{order:1;width:min(960px,calc(100vw - 32px));margin:4px 0 0}.preview-mode .quiz-options{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.preview-mode .quiz-choice{min-height:58px;border:2px solid #4a515d;background:#15181d;border-radius:14px;padding:14px 16px;font-size:15px}.preview-mode .quiz-choice:not(:disabled):hover{border-color:#fff;background:#242931}.preview-mode .quiz-result{order:2;width:min(960px,calc(100vw - 32px));margin:0;background:transparent!important;border:0!important;padding:2px 0 0;text-align:center;font-size:16px}.preview-mode .quiz-result-title{justify-content:center;font-size:18px}.preview-mode .quiz-result-message{font-size:13px}.preview-mode .quiz-editor-link{margin-top:14px;padding:11px 16px;border-radius:999px}.preview-mode .canvas-wrap{box-shadow:0 12px 42px #0007}.preview-mode .editable{cursor:default}.preview-mode .editable:hover{filter:none;box-shadow:none}
 @media(max-width:800px){.topbar{height:auto;min-height:62px;padding:10px;overflow-x:auto}.brand{display:none}.workspace{padding:10px}.tb{padding:8px 10px;font-size:12px}.row2{grid-template-columns:1fr}.modal-backdrop{padding:8px}.modal{max-height:94vh}.grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}.share-grid{grid-template-columns:1fr}.share-action{min-height:82px}.quiz-options{grid-template-columns:1fr}.quiz-panel{padding:14px}.quiz-editor-head{align-items:stretch;flex-direction:column}.quiz-mode-switch{width:100%}.quiz-edit-row{grid-template-columns:minmax(0,1fr) 38px 48px 36px}.quiz-search,.quiz-mark-correct,.quiz-remove{height:40px}}
 </style>
@@ -131,7 +131,7 @@ const GLOBAL_SLOTS=['lg1','lg2','rg1','rg2'];
 const BAN_SLOTS=['lb1','lb2','lb3','rb1','rb2','rb3'];
 const PICK_SLOTS=['lp1','rp1','rp2','lp2','lp3','rp3'];
 const ALL_SLOTS=Object.keys(SLOT_NAMES);
-const SLOT_RUNS=[['lg1','lg2'],['rg1','rg2'],['lb1','lb2','lb3'],['rb1','rb2','rb3'],PICK_SLOTS];
+const SLOT_RUNS=[GLOBAL_SLOTS,BAN_SLOTS,PICK_SLOTS];
 const RANKED_POOL={
   'Brawl Ball':['Center Stage','Pinball Dreams','Penalty Kick','Triple Dribble'],
   'Gem Grab':['Double Swoosh','Hard Rock Mine','Last Stop','Undermine'],
@@ -182,8 +182,30 @@ let corestatsTeams=CORESTATS_TEAM_SNAPSHOT.slice();
 const QUESTION_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect width="1000" height="1000" fill="#fff"/><text x="500" y="535" text-anchor="middle" dominant-baseline="middle" fill="#111214" font-family="Arial Black,Arial,sans-serif" font-size="690" font-weight="900">?</text></svg>';
 const QUESTION_IMAGE='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(QUESTION_SVG);
 const blankSlot=()=>({name:'',id:'',image:''});
-const QUIZ_CORRECT_MESSAGES=['정답이에요! 숨겨진 선택을 정확히 찾았어요.','맞았어요! 드래프트를 제대로 읽었네요.','정확해요! 핵심 선택을 잘 짚었어요.','정답입니다! 좋은 판단이었어요.'];
-const QUIZ_WRONG_MESSAGES=['아쉽지만 정답은 아니에요.','선택한 항목은 정답과 달라요.','이번 선택은 오답이에요.','정답을 놓쳤어요. 아쉽네요.'];
+const QUIZ_CORRECT_MESSAGES=[
+  '정답이에요! 숨겨진 선택을 정확히 찾았어요.',
+  '맞았어요! 드래프트 흐름을 제대로 읽었네요.',
+  '정확해요! 핵심 선택을 잘 짚었어요.',
+  '정답입니다! 판단이 정확했어요.',
+  '바로 그거예요! 숨겨진 항목을 찾아냈어요.',
+  '완벽해요! 정답을 정확히 골랐어요.',
+  '드래프트를 잘 읽었어요. 정답입니다!',
+  '좋은 선택이에요! 정답을 맞혔어요.',
+  '정답이에요! 예상이 정확히 들어맞았어요.',
+  '맞았습니다! 숨겨진 선택을 잘 찾아냈어요.'
+];
+const QUIZ_WRONG_MESSAGES=[
+  '아쉽지만 정답은 아니에요.',
+  '선택한 항목은 정답과 달라요.',
+  '이번 선택은 오답이에요.',
+  '정답을 놓쳤어요. 조금 아쉽네요.',
+  '아쉽게 빗나갔어요. 숨겨진 선택은 다른 항목이에요.',
+  '이번에는 맞히지 못했어요.',
+  '정답과는 다른 선택이었어요.',
+  '조금 아쉽네요. 정답은 다른 항목이에요.',
+  '예상과 달랐어요. 숨겨진 항목을 확인해 보세요.',
+  '아쉽게도 선택한 답은 정답이 아니에요.'
+];
 const blankQuiz=()=>({enabled:false,mode:'choices',options:[],inputAnswer:'',mysteryAnswer:''});
 const blankState=()=>({
   teams:{left:{name:'',abbr:'',logo:''},right:{name:'',abbr:'',logo:''}},
@@ -312,7 +334,7 @@ function renderQuizSolver(panel){
   if(!configured){panel.innerHTML=`<h2>${esc(quizQuestion())}</h2><div class="quiz-result neutral show">정답이 설정되지 않았습니다.</div>`;return}
   const answers=inputMode?[mystery?mysteryAnswer:String(state.quiz.inputAnswer||'').trim()]:options.filter(v=>v.correct||mystery&&normalize(v.text)===normalize(mysteryAnswer)).map(v=>v.text);
   const controls=inputMode?(()=>{const outcome=quizRevealed?(quizResultCorrect?'correct':'wrong'):'';return `<div class="quiz-input-row ${outcome}"><input id="quizAnswerInput" value="${escAttr(quizSelectedAnswer)}" placeholder="정답을 입력하세요" aria-label="정답 입력" ${quizRevealed?'disabled':''}><button class="quiz-submit" id="quizSubmit" ${quizRevealed?'disabled':''}>${quizRevealed?'완료':'정답 확인'}</button>${quizRevealed?`<span class="quiz-input-mark" aria-label="${quizResultCorrect?'정답':'오답'}">${quizResultCorrect?'O':'X'}</span>`:''}</div>`})():`<div class="quiz-options">${options.map((v,i)=>{const chosen=normalize(quizSelectedAnswer)===normalize(v.text),correct=answers.some(a=>normalize(a)===normalize(v.text));const outcome=quizRevealed?(correct?'answer-correct':chosen?'answer-wrong':'locked'):(chosen?'selected':'');const mark=quizRevealed&&(correct||chosen)?`<span class="quiz-choice-mark" aria-label="${correct?'정답':'오답'}">${correct?'O':'X'}</span>`:'';return `<button class="quiz-choice ${outcome}" data-quiz-choice="${escAttr(v.text)}" ${quizRevealed?'disabled':''}><span>${i+1}. ${esc(v.text)}</span>${mark}</button>`}).join('')}</div>`;
-  const result=quizRevealed?`<div class="quiz-result ${quizResultCorrect?'correct':'wrong'} show"><div class="quiz-result-title"><span class="quiz-result-symbol">${quizResultCorrect?'O':'X'}</span><span>${esc(quizResultText)}</span></div><div class="quiz-result-message">정답: ${esc(answers.join(', '))}</div><a class="quiz-editor-link" href="${escAttr(publicSiteUrl())}">나도 직접 퀴즈 만들어보기</a></div>`:'';
+  const result=quizRevealed?`<div class="quiz-result ${quizResultCorrect?'correct':'wrong'} show"><div class="quiz-result-title"><span class="quiz-result-symbol">${quizResultCorrect?'O':'X'}</span><span>${esc(quizResultText)}</span></div><div class="quiz-result-message">정답: ${esc(answers.join(', '))}</div><a class="quiz-editor-link" href="${escAttr(publicSiteUrl())}">직접 퀴즈 만들기</a></div>`:'';
   panel.innerHTML=`<h2>${esc(quizQuestion())}</h2>${controls}${result}`;
   panel.querySelectorAll('[data-quiz-choice]').forEach(btn=>btn.onclick=()=>{if(quizRevealed)return;quizSelectedAnswer=btn.dataset.quizChoice||'';quizResultCorrect=answers.some(v=>normalize(v)===normalize(quizSelectedAnswer));quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()});
   const answerInput=document.getElementById('quizAnswerInput');if(answerInput&&!quizRevealed){answerInput.oninput=()=>{quizSelectedAnswer=answerInput.value};answerInput.onkeydown=e=>{if(e.key==='Enter')document.getElementById('quizSubmit')?.click()}}
