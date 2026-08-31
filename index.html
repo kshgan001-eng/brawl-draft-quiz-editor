@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>브롤스타즈 드래프트 퀴즈 편집기</title>
+<meta name="description" content="클릭해서 바로 수정하는 브롤스타즈 드래프트 퀴즈 편집기">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+:root{
+  --ink:#111214;--paper:#f4f4f0;--blue:#315fdf;--red:#e95342;--mode:#7138dc;
+  --ui:#111317;--ui2:#1c1f25;--line:#30343c;--text:#f5f6f7;--muted:#aeb4bf;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#0d0f12;color:var(--text);font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}
+button,input{font:inherit} button{cursor:pointer}
+body{overflow-x:hidden}
+.topbar{
+  position:sticky;top:0;z-index:100;height:64px;padding:0 18px;display:flex;align-items:center;gap:10px;
+  background:rgba(15,17,20,.94);backdrop-filter:blur(14px);border-bottom:1px solid #292d34
+}
+.brand{font-weight:950;font-size:17px;margin-right:auto;white-space:nowrap}.brand small{display:block;color:#8f96a2;font-size:10px;font-weight:700;margin-top:2px}
+.tb{border:1px solid #363b44;background:#20242a;color:#fff;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap}
+.tb:hover{background:#292e36}.tb.primary{background:#fff;color:#111;border-color:#fff}.tb.danger{color:#ff9a91}
+.workspace{min-height:calc(100vh - 64px);display:flex;align-items:flex-start;justify-content:center;padding:22px;overflow:auto}
+.stage{position:relative;flex:0 0 auto}.canvas-wrap{width:1920px;height:1080px;transform-origin:top left;box-shadow:0 16px 55px rgba(0,0,0,.5)}
+.canvas{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Impact,"Arial Black",Pretendard,"Noto Sans KR",sans-serif}
+.frame{position:absolute;background:#fff;border:6px solid var(--ink);overflow:hidden}
+.editable{cursor:pointer;transition:filter .13s ease,box-shadow .13s ease}.editable:hover{filter:brightness(.94);box-shadow:inset 0 0 0 7px rgba(255,216,61,.9)}
+.asset{position:relative;width:100%;height:100%;overflow:hidden;background:#e9e9e5}
+.asset.empty:after{content:"+";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c1c1bb;font:900 66px/1 Arial}
+.asset img{position:relative;z-index:1;width:100%;height:100%;display:block}
+.asset img.brawler-portrait{object-fit:cover;object-position:center;transform:none;background:#e9e9e5}
+[data-slot] .brawler-portrait{object-fit:cover;object-position:center;transform:none}
+.global-ban-top .brawler-portrait,.ban .brawler-portrait,[data-slot^="lp"] .brawler-portrait,[data-slot^="rp"] .brawler-portrait{width:100%;height:100%;object-fit:cover;object-position:center}
+.global-left{left:62px;top:58px;width:225px;height:128px}.global-right{left:1632px;top:58px;width:225px;height:128px}
+.global-ban-top{display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%}.global-ban-top>div+div{border-left:6px solid var(--ink)}
+.global-ban-top .asset img,.ban .asset img{filter:grayscale(1) contrast(1.06) brightness(.92)}
+.left-ban-1{left:55px;top:220px;width:240px;height:230px}.left-ban-2{left:55px;top:466px;width:240px;height:230px}.left-ban-3{left:55px;top:712px;width:240px;height:205px}
+.left-pick-1{left:320px;top:18px;width:326px;height:300px}.left-pick-2{left:320px;top:334px;width:326px;height:286px}.left-pick-3{left:320px;top:636px;width:326px;height:281px}
+.map-title{left:675px;top:18px;width:570px;height:106px;display:flex;align-items:center;background:#fff}.mode-icon{width:104px;height:100%;border-right:6px solid var(--ink);padding:8px;display:flex;align-items:center;justify-content:center}.mode-icon img{width:100%;height:100%;object-fit:contain}.mode-icon.empty:after{content:"+";font:900 42px Arial;color:#bbb}
+.map-title-text{flex:1;text-align:center;color:var(--mode);font-size:62px;font-weight:950;letter-spacing:-.055em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 16px}.map-title-text:empty:after{content:"맵 선택";color:#c9c9c4;font-size:42px;letter-spacing:-.04em}
+.map-frame{left:675px;top:124px;width:570px;height:793px;padding:14px;background:#fff}.map-frame .asset img{object-fit:cover;object-position:center}.map-frame .question-mark img{object-fit:contain}
+.right-pick-1{left:1274px;top:18px;width:326px;height:300px}.right-pick-2{left:1274px;top:334px;width:326px;height:286px}.right-pick-3{left:1274px;top:636px;width:326px;height:281px}
+.question-mark{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#111214;overflow:hidden}.question-mark img{width:100%;height:100%;display:block;object-fit:contain}
+.right-ban-1{left:1625px;top:220px;width:240px;height:230px}.right-ban-2{left:1625px;top:466px;width:240px;height:230px}.right-ban-3{left:1625px;top:712px;width:240px;height:205px}
+.team-left{left:55px;top:936px;width:591px;height:116px;display:grid;grid-template-columns:1fr 120px}.team-left-name{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:46px;font-weight:950;letter-spacing:-.045em;white-space:nowrap;border-right:6px solid var(--ink);overflow:hidden;padding:0 12px}.team-left-name:empty:after,.team-right-name:empty:after{content:"팀";color:#c8c8c3}
+.team-logo-cell{position:relative;display:flex;align-items:center;justify-content:center;background:#fff}.team-logo-cell img{width:92px;height:92px;object-fit:contain;display:block}.team-logo-cell.empty:after{content:"+";font:900 46px Arial;color:#bbb}
+.center-score{left:675px;top:936px;width:570px;height:116px;display:grid;grid-template-columns:1fr 1fr}.center-score div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:70px;font-weight:950;letter-spacing:-.06em}.center-blue{background:var(--blue);border-right:6px solid var(--ink)}.center-red{background:var(--red)}
+.team-right{left:1274px;top:936px;width:592px;height:116px;display:grid;grid-template-columns:120px 1fr}.team-right .team-logo-cell{border-right:6px solid var(--ink)}.team-right-name{display:flex;align-items:center;justify-content:center;color:var(--red);font-size:46px;font-weight:950;letter-spacing:-.05em;white-space:nowrap;overflow:hidden;padding:0 12px}
+.toast{position:fixed;left:50%;bottom:28px;z-index:250;transform:translate(-50%,20px);opacity:0;background:#fff;color:#111;border-radius:12px;padding:11px 16px;font-weight:900;box-shadow:0 12px 35px #0008;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal-backdrop{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:22px}.modal-backdrop.open{display:flex}
+.modal{width:min(940px,96vw);max-height:88vh;background:#15181d;border:1px solid #343943;border-radius:18px;box-shadow:0 24px 90px #000c;display:flex;flex-direction:column;overflow:hidden}.modal-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid #30343c}.modal-head h2{font-size:18px;margin:0;font-weight:950}.modal-head .sub{font-size:11px;color:#9299a5}.close{margin-left:auto;border:0;background:#272c34;color:#fff;border-radius:9px;width:36px;height:36px;font-size:22px}.modal-body{padding:16px;overflow:auto}
+.searchbar{display:flex;gap:8px;margin-bottom:12px}.searchbar input,.field input{width:100%;border:1px solid #3b414b;background:#0f1115;color:#fff;border-radius:10px;padding:11px 12px;outline:none}.searchbar input:focus,.field input:focus{border-color:#7b8493}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}.tab{border:1px solid #363b44;background:#20242a;color:#cfd3da;border-radius:999px;padding:8px 12px;font-weight:850;font-size:12px}.tab.active{background:#fff;color:#111;border-color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:9px}.card{position:relative;border:1px solid #333943;background:#1c2026;border-radius:12px;overflow:hidden;min-height:126px;color:#fff;text-align:left;padding:0}.card:hover{border-color:#8a93a2;transform:translateY(-1px)}.card.selected{border-color:#fff;box-shadow:inset 0 0 0 2px #fff}.card img{width:100%;height:95px;object-fit:contain;object-position:center;display:block;background:#252a31;padding:2px}
+.card.mystery-card img,.card.map-card.mystery-card img{object-fit:contain;background:#111214;padding:0}
+.card .sub-label{font-size:9px;color:#8f97a3;padding:0 8px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-4px}
+.team-grid .card{min-height:135px}.team-grid .card img{height:95px;object-fit:contain;padding:9px;background:#f5f5f5}.team-grid .label{text-align:center}
+.corestats-state{font-size:11px;color:#9ca4af;padding:10px 0}.corestats-state.ok{color:#9fe0ad}.corestats-state.err{color:#ffaaa3}.card .label{font-size:11px;font-weight:900;padding:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card.map-card{min-height:142px}.card.map-card img{height:106px;object-position:center;object-fit:cover}.mode-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.loading{padding:30px;text-align:center;color:#9da4af;font-weight:800}.empty-result{padding:28px;text-align:center;color:#858c97}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.action{border:1px solid #3a4049;background:#242930;color:#fff;border-radius:10px;padding:10px 13px;font-weight:900}.action.primary{background:#fff;color:#111;border-color:#fff}.action.warn{color:#ffcf57}.action.red{color:#ff9188}.action.link{background:#212a39;color:#acd0ff}
+.form{display:grid;gap:12px}.field label{display:block;color:#b4bac4;font-size:11px;font-weight:900;margin:0 0 6px}.field .hint{font-size:10px;color:#7f8793;margin-top:5px;line-height:1.45}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.upload{border:1px dashed #4b5360;background:#191d23;border-radius:12px;padding:14px;text-align:center}.upload input{display:none}.upload label{cursor:pointer;font-weight:900;color:#dfe3e8}.note{font-size:11px;line-height:1.55;color:#8f97a3;background:#111419;border:1px solid #2b3038;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.preview-mode .topbar{display:none}.preview-mode .workspace{padding:0;min-height:100vh;background:#202124;align-items:flex-start}.preview-mode .canvas-wrap{box-shadow:none}.preview-mode .editable{cursor:default}.preview-mode .editable:hover{filter:none;box-shadow:none}
+@media(max-width:800px){.topbar{height:auto;min-height:62px;padding:10px;overflow-x:auto}.brand{display:none}.workspace{padding:10px}.tb{padding:8px 10px;font-size:12px}.row2{grid-template-columns:1fr}.modal-backdrop{padding:8px}.modal{max-height:94vh}.grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}}
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar">
+  <div class="brand">드래프트 퀴즈 편집기<small>원하는 곳을 클릭해서 바로 수정</small></div>
+  <button class="tb primary" id="previewBtn">미리보기</button>
+  <button class="tb" id="pngBtn">PNG 저장</button>
+  <button class="tb" id="shareBtn">편집 링크 공유</button>
+  <button class="tb" id="quizBtn">퀴즈 링크 공유</button>
+  <button class="tb" id="swapBtn">좌우 교체</button>
+  <button class="tb danger" id="resetBtn">전부 비우기</button>
+</header>
+<main class="workspace" id="workspace">
+  <div class="stage" id="stage"><div class="canvas-wrap" id="canvasWrap"><div class="canvas" id="canvas">
+    <div class="frame global-left"><div class="global-ban-top"><div id="lg1" class="editable" data-slot="lg1"></div><div id="lg2" class="editable" data-slot="lg2"></div></div></div>
+    <div class="frame global-right"><div class="global-ban-top"><div id="rg1" class="editable" data-slot="rg1"></div><div id="rg2" class="editable" data-slot="rg2"></div></div></div>
+
+    <div class="frame ban left-ban-1 editable" id="lb1" data-slot="lb1"></div>
+    <div class="frame ban left-ban-2 editable" id="lb2" data-slot="lb2"></div>
+    <div class="frame ban left-ban-3 editable" id="lb3" data-slot="lb3"></div>
+
+    <div class="frame left-pick-1 editable" id="lp1" data-slot="lp1"></div>
+    <div class="frame left-pick-2 editable" id="lp2" data-slot="lp2"></div>
+    <div class="frame left-pick-3 editable" id="lp3" data-slot="lp3"></div>
+
+    <div class="frame map-title">
+      <div class="mode-icon editable empty" id="modeIconCell" data-edit="mode"><img id="modeIconImg" alt=""></div>
+      <div class="map-title-text editable" id="mapTitle" data-edit="map"></div>
+    </div>
+    <div class="frame map-frame editable" data-edit="map"><div class="asset empty" id="mapAsset"><img id="mapImg" alt=""></div></div>
+
+    <div class="frame right-pick-1 editable" id="rp1" data-slot="rp1"></div>
+    <div class="frame right-pick-2 editable" id="rp2" data-slot="rp2"></div>
+    <div class="frame right-pick-3 editable" id="rp3" data-slot="rp3"></div>
+
+    <div class="frame ban right-ban-1 editable" id="rb1" data-slot="rb1"></div>
+    <div class="frame ban right-ban-2 editable" id="rb2" data-slot="rb2"></div>
+    <div class="frame ban right-ban-3 editable" id="rb3" data-slot="rb3"></div>
+
+    <div class="frame team-left editable" data-team="left"><div class="team-left-name" id="leftTeamName"></div><div class="team-logo-cell empty" id="leftLogoCell"></div></div>
+    <div class="frame center-score"><div class="center-blue" id="leftAbbr"></div><div class="center-red" id="rightAbbr"></div></div>
+    <div class="frame team-right editable" data-team="right"><div class="team-logo-cell empty" id="rightLogoCell"></div><div class="team-right-name" id="rightTeamName"></div></div>
+  </div></div></div>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><section class="modal"><div class="modal-head"><div><h2 id="modalTitle">편집</h2><div class="sub" id="modalSub"></div></div><button class="close" id="modalClose">×</button></div><div class="modal-body" id="modalBody"></div></section></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY='brawl-draft-quiz-click-editor-v3';
+const SLOT_NAMES={lg1:'왼쪽 글로벌 밴 1',lg2:'왼쪽 글로벌 밴 2',rg1:'오른쪽 글로벌 밴 1',rg2:'오른쪽 글로벌 밴 2',lb1:'왼쪽 밴 1',lb2:'왼쪽 밴 2',lb3:'왼쪽 밴 3',rb1:'오른쪽 밴 1',rb2:'오른쪽 밴 2',rb3:'오른쪽 밴 3',lp1:'왼쪽 픽 1',lp2:'왼쪽 픽 2',lp3:'왼쪽 픽 3',rp1:'오른쪽 픽 1',rp2:'오른쪽 픽 2',rp3:'오른쪽 픽 3'};
+const PICK_SLOTS=['lp1','lp2','lp3','rp1','rp2','rp3'];
+const ALL_SLOTS=Object.keys(SLOT_NAMES);
+const RANKED_POOL={
+  'Brawl Ball':['Center Stage','Pinball Dreams','Penalty Kick','Triple Dribble'],
+  'Gem Grab':['Double Swoosh','Hard Rock Mine','Last Stop','Undermine'],
+  'Knockout':["Belle's Rock",'Flaring Phoenix','Goldarm Gulch','Out in the Open'],
+  'Hot Zone':['Dueling Beetles','Open Business','Parallel Plays','Ring of Fire'],
+  'Heist':['Bridge Too Far','Hot Potato','Kaboom Canyon','Safe Zone'],
+  'Bounty':['Canal Grande','Hideout','Shooting Star','Snake Prairie']
+};
+// BSC 2026 August Monthly Finals (East Asia) published decider-map set, union of QF/SF/GF deciders.
+const BSC_POOL={
+  'Heist':['Kaboom Canyon','Pit Stop','Safe Zone'],
+  'Bounty':['Layer Cake','Hideout'],
+  'Hot Zone':['Dueling Beetles','Ring of Fire'],
+  'Brawl Ball':['Pinhole Punt','Triple Dribble','Pinball Dreams'],
+  'Gem Grab':['Hard Rock Mine','Gem Fort'],
+  'Knockout':['Out in the Open','Goldarm Gulch','New Horizons']
+};
+const MODE_PRESETS=[
+  {name:'Gem Grab',ko:'젬 그랩',id:'48000000',color:'#8b4bd9'},
+  {name:'Heist',ko:'하이스트',id:'48000002',color:'#e6534b'},
+  {name:'Bounty',ko:'바운티',id:'48000003',color:'#2e9be8'},
+  {name:'Brawl Ball',ko:'브롤 볼',id:'48000005',color:'#39a94b'},
+  {name:'Hot Zone',ko:'핫 존',id:'48000017',color:'#f15a42'},
+  {name:'Knockout',ko:'녹아웃',id:'48000020',color:'#e982b4'}
+].map(x=>({...x,icon:`https://cdn.brawlify.com/game-modes/regular/${x.id}.png`}));
+
+
+const BRAWLER_KO={
+  'SHELLY':'쉘리','COLT':'콜트','BULL':'불','BROCK':'브록','BARLEY':'발리','NITA':'니타','EL PRIMO':'엘 프리모','POCO':'포코','ROSA':'로사',
+  'RICO':'리코','JESSIE':'제시','DYNAMIKE':'다이너마이크','DARRYL':'대릴','PENNY':'페니','TICK':'틱','CARL':'칼','8-BIT':'8비트','JACKY':'재키','GUS':'거스',
+  'BO':'보','PIPER':'파이퍼','PAM':'팸','FRANK':'프랭크','BIBI':'비비','BEA':'비','EMZ':'엠즈','GALE':'게일','NANI':'나니','COLETTE':'콜레트','EDGAR':'에드거','STU':'스튜','BELLE':'벨','GROM':'그롬','GRIFF':'그리프','ASH':'애쉬','LOLA':'롤라','BONNIE':'보니','SAM':'샘','MANDY':'맨디','MAISIE':'메이지','HANK':'행크','PEARL':'펄','LARRY & LAWRIE':'래리 & 로리','ANGELO':'안젤로','BERRY':'베리','SHADE':'셰이드','MEEPLE':'미플','TRUNK':'트렁크','BOLT':'볼트',
+  'MORTIS':'모티스','TARA':'타라','GENE':'진','MR. P':'미스터 P','MAX':'맥스','SPROUT':'스프라우트','LOU':'루','BYRON':'바이런','RUFFS':'러프스','COLONEL RUFFS':'러프스','SQUEAK':'스퀴크','BUZZ':'버즈','FANG':'팽','EVE':'이브','JANET':'자넷','OTIS':'오티스','BUSTER':'버스터','GRAY':'그레이','R-T':'R-T','WILLOW':'윌로우','DOUG':'더그','CHUCK':'척','CHARLIE':'찰리','MICO':'미코','MELODIE':'멜로디','LILY':'릴리','CLANCY':'클랜시','MOE':'모','JUJU':'주주','OLLIE':'올리','LUMI':'루미','FINX':'핑크스','JAE-YONG':'재용','JAE YONG':'재용','ALLI':'알리','MINA':'미나','ZIGGY':'지기','GIGI':'지지','GLOWY':'글로이','NAJIA':'나지아','DAMIAN':'데미안','STARR NOVA':'스타 노바','WENDY':'웬디',
+  'SPIKE':'스파이크','CROW':'크로우','LEON':'레온','SANDY':'샌디','SURGE':'서지','AMBER':'앰버','MEG':'메그','CHESTER':'체스터','CORDELIUS':'코델리우스','KIT':'키트','DRACO':'드라코','KENJI':'켄지','PIERCE':'피어스','NORI':'노리','KAZE':'카제','SIRIUS':'시리우스'
+};
+const MAP_KO={
+  'CENTER STAGE':'센터 스테이지','PINBALL DREAMS':'핀볼 드림','PENALTY KICK':'승부차기','TRIPLE DRIBBLE':'트리플 드리블',
+  'DOUBLE SWOOSH':'이중 곡선','HARD ROCK MINE':'암석 광산','LAST STOP':'종점','UNDERMINE':'흔들 광산',
+  "BELLE'S ROCK":'벨스 락','FLARING PHOENIX':'타오르는 불사조','GOLDARM GULCH':'골드암 협곡','OUT IN THE OPEN':'오픈 필드',
+  'DUELING BEETLES':'곤충 싸움','OPEN BUSINESS':'오픈 비즈니스','PARALLEL PLAYS':'평행선','RING OF FIRE':'불의 고리',
+  'BRIDGE TOO FAR':'머나먼 다리','HOT POTATO':'뜨거운 감자','KABOOM CANYON':'우당탕 협곡','SAFE ZONE':'안전지대',
+  'CANAL GRANDE':'그랜드 운하','HIDEOUT':'은신처','SHOOTING STAR':'별내림 계곡','SNAKE PRAIRIE':'뱀의 초원',
+  'PIT STOP':'피트 스톱','LAYER CAKE':'레이어 케이크','PINHOLE PUNT':'핀홀 필드','GEM FORT':'보석 요새','NEW HORIZONS':'새로운 지평선'
+};
+// Corestats /teams에서 확인한 현재 팀 목록. 라이브 호출이 막혀도 로고와 기본 정보가 표시됩니다.
+const CORESTATS_TEAM_SNAPSHOT=[{"code":"TRB","name":"Tribe Gaming","region":"NA","logo":"https://corestats.pro/static/logo/a64bb22a-55da-42ea-96a8-00d32e231be5.png","winRate":"56.8%","wins":"2216","matches":"3902","page":"https://corestats.pro/team/TRB"},{"code":"BH","name":"Bounty Hunters Allu","region":"SA","logo":"https://corestats.pro/static/logo/a37c8ef6-7891-437b-86e1-a2fb3cb4781f.png","winRate":"51.3%","wins":"1791","matches":"3490","page":"https://corestats.pro/team/BH"},{"code":"TE","name":"Team Elektros","region":"NA","logo":"https://corestats.pro/static/logo/05b9918b-8c2f-41e8-a32b-8125eb79fe14.png","winRate":"68.5%","wins":"2274","matches":"3319","page":"https://corestats.pro/team/TE"},{"code":"VTC","name":"Vatic","region":"NA","logo":"https://corestats.pro/static/logo/ecc1750d-3d42-4208-a960-e14b19ed8a31.png","winRate":"60.4%","wins":"1927","matches":"3189","page":"https://corestats.pro/team/VTC"},{"code":"LOUD","name":"LOUD","region":"SA","logo":"https://corestats.pro/static/logo/b0af78ae-0da3-4d57-8330-53eee0c59385.png","winRate":"56.3%","wins":"1736","matches":"3084","page":"https://corestats.pro/team/LOUD"},{"code":"KDS","name":"KDS","region":"NA","logo":"https://corestats.pro/api/assets/6a628f44357205e971c413db","winRate":"49.5%","wins":"1480","matches":"2987","page":"https://corestats.pro/team/KDS"},{"code":"SK","name":"SK GAMING","region":"EMEA","logo":"https://corestats.pro/static/logo/84942c1f-f70f-45d6-8442-9c726a73305b.png","winRate":"53.4%","wins":"1526","matches":"2858","page":"https://corestats.pro/team/SK"},{"code":"PWD","name":"PWD","region":"SA","logo":"https://corestats.pro/api/assets/6a6477ca357205e971c413df","winRate":"49.8%","wins":"1424","matches":"2857","page":"https://corestats.pro/team/PWD"},{"code":"ZETA","name":"ZETA DIVISION","region":"EA","logo":"https://corestats.pro/static/logo/705df513-ce00-4d06-aac0-0c7d4635ae19.png","winRate":"57.2%","wins":"1592","matches":"2781","page":"https://corestats.pro/team/ZETA"},{"code":"TH","name":"Team Heretics","region":"EMEA","logo":"https://corestats.pro/static/logo/816030aa-62a9-4385-ae06-61bb174c907d.png","winRate":"52.5%","wins":"1398","matches":"2664","page":"https://corestats.pro/team/TH"},{"code":"INS","name":"INSOMNIA","region":"EA","logo":"https://corestats.pro/api/assets/6a225fa6dba3295b99d56530","winRate":"54%","wins":"1377","matches":"2552","page":"https://corestats.pro/team/INS"},{"code":"BIG","name":"BIG","region":"EMEA","logo":"https://corestats.pro/static/logo/40e33c52-5017-4f4a-9286-2001bd7274d7.png","winRate":"55.4%","wins":"1388","matches":"2505","page":"https://corestats.pro/team/BIG"},{"code":"FUT","name":"FUT Esports","region":"EMEA","logo":"https://corestats.pro/static/logo/9acc8def-93e5-4721-887e-9e5e40318eaf.png","winRate":"69.8%","wins":"1726","matches":"2472","page":"https://corestats.pro/team/FUT"},{"code":"TTM","name":"Reply Totem","region":"EMEA","logo":"https://corestats.pro/static/logo/587671f9-ffd3-4d7b-a812-d5fd460ace76.png","winRate":"50.8%","wins":"1246","matches":"2455","page":"https://corestats.pro/team/TTM"},{"code":"OS","name":"Olimpo Squad","region":"SA","logo":"https://corestats.pro/static/logo/eeae167b-9a70-4790-86c3-77da587a7760.png","winRate":"47.5%","wins":"1147","matches":"2415","page":"https://corestats.pro/team/OS"},{"code":"HMB","name":"HMBLE","region":"EMEA","logo":"https://corestats.pro/static/logo/62733449-ebdc-46de-b8e9-ce2d5c69829a.png","winRate":"62.4%","wins":"1392","matches":"2232","page":"https://corestats.pro/team/HMB"},{"code":"NAVI","name":"NAVI","region":"EMEA","logo":"https://corestats.pro/static/logo/c74949e7-ed7a-4889-85cd-2101830f763a.png","winRate":"48.9%","wins":"1080","matches":"2208","page":"https://corestats.pro/team/NAVI"},{"code":"REV","name":"Reverso Hive","region":"EMEA","logo":"https://corestats.pro/static/logo/174cff5a-4db7-4402-8f3e-3e7a9d720092.png","winRate":"56.4%","wins":"1155","matches":"2049","page":"https://corestats.pro/team/REV"},{"code":"CR","name":"Crazy Raccoon","region":"EA","logo":"https://corestats.pro/static/logo/a07624df-9118-4a2a-9181-fa6c0dc329e4.png","winRate":"58.5%","wins":"1181","matches":"2018","page":"https://corestats.pro/team/CR"},{"code":"LGCY","name":"Legacy Esports","region":"NA","logo":"https://corestats.pro/static/logo/9049f40a-364a-41d6-b2b0-f61db08eeb53.png","winRate":"44.5%","wins":"865","matches":"1946","page":"https://corestats.pro/team/LGCY"},{"code":"RVL","name":"Rival Esports","region":"EA","logo":"https://corestats.pro/static/logo/3215ec18-d8c8-488a-94a5-55246191d6de.png","winRate":"51.1%","wins":"959","matches":"1878","page":"https://corestats.pro/team/RVL"},{"code":"FL","name":"FENNEL","region":"EA","logo":"https://corestats.pro/static/logo/a565c5e4-33ae-44bf-8843-c6ba4ebe5aba.png","winRate":"42.5%","wins":"782","matches":"1842","page":"https://corestats.pro/team/FL"},{"code":"IGM","name":"IGNUM ESPORTS","region":"EA","logo":"https://corestats.pro/api/assets/6a49e260aeb10fe5debd1c22","winRate":"50.3%","wins":"874","matches":"1737","page":"https://corestats.pro/team/IGM"},{"code":"NOVO","name":"NOVO Esports","region":"EMEA","logo":"https://corestats.pro/static/logo/d7ea30a5-9dde-4cfb-9e0f-e74faccf9c07.png","winRate":"51.9%","wins":"882","matches":"1700","page":"https://corestats.pro/team/NOVO"},{"code":"KUMA","name":"Kumalazawesta","region":"EMEA","logo":"https://corestats.pro/api/assets/6a2530411d022772f3205d21","winRate":"56.8%","wins":"890","matches":"1568","page":"https://corestats.pro/team/KUMA"},{"code":"RC","name":"REJECT","region":"EA","logo":"https://corestats.pro/static/logo/825f8b3c-07ff-43bd-9da2-de4655c1ded2.png","winRate":"47%","wins":"727","matches":"1546","page":"https://corestats.pro/team/RC"},{"code":"FUT2","name":"FUT ACADEMY","region":"EMEA","logo":"https://corestats.pro/static/logo/8bf73d25-8b59-4475-b005-7fcb92164372.png","winRate":"61%","wins":"880","matches":"1442","page":"https://corestats.pro/team/FUT2"},{"code":"CB","name":"Creche Brawl","region":"SA","logo":"https://corestats.pro/static/logo/fe29c747-bf9c-413d-bf21-fb3d88951d28.png","winRate":"60.9%","wins":"796","matches":"1306","page":"https://corestats.pro/team/CB"},{"code":"FZ","name":"FRENZY","region":"EA","logo":"https://corestats.pro/static/logo/1ef3f8c5-348b-418b-9bac-8b4f8d81f25e.png","winRate":"44.8%","wins":"542","matches":"1211","page":"https://corestats.pro/team/FZ"},{"code":"RNTX","name":"Revenant XSpark","region":"SEA","logo":"https://corestats.pro/static/logo/26584d8a-69ab-44ad-9409-a43b82e8c404.png","winRate":"72.9%","wins":"873","matches":"1198","page":"https://corestats.pro/team/RNTX"},{"code":"MZP","name":"Metizport","region":"EMEA","logo":"https://corestats.pro/static/logo/17a35c76-3e01-4af8-b5dd-a2811d57f9bd.png","winRate":"43.8%","wins":"517","matches":"1181","page":"https://corestats.pro/team/MZP"},{"code":"SLC","name":"Slice Esport","region":"EMEA","logo":"https://corestats.pro/static/logo/74c86acc-4083-4b30-8d90-0347c21a4635.jpg","winRate":"52.8%","wins":"615","matches":"1164","page":"https://corestats.pro/team/SLC"},{"code":"AXIS","name":"AXIS e-sports","region":"EA","logo":"https://corestats.pro/api/assets/6a23e9f15b8a9280b54d9cda","winRate":"52.9%","wins":"583","matches":"1102","page":"https://corestats.pro/team/AXIS"},{"code":"KBP","name":"F/A KEBAP","region":"EMEA","logo":"https://corestats.pro/static/logo/5145742a-f003-4d9e-871b-36e62f34d524.png","winRate":"50.6%","wins":"534","matches":"1056","page":"https://corestats.pro/team/KBP"},{"code":"TLB","name":"Talents Lab","region":"EMEA","logo":"https://corestats.pro/api/assets/6a8c61633232b5c2ec9b4901","winRate":"62.7%","wins":"532","matches":"848","page":"https://corestats.pro/team/TLB"},{"code":"HML","name":"F/A Homeless","region":"NA","logo":"https://corestats.pro/api/assets/6a23f7a55b8a9280b54d9ce0","winRate":"54.4%","wins":"461","matches":"847","page":"https://corestats.pro/team/HML"},{"code":"FNRS","name":"Fenris Gaming","region":"EMEA","logo":"https://corestats.pro/api/assets/6a473e3c740930c04b83b66f","winRate":"50.7%","wins":"415","matches":"819","page":"https://corestats.pro/team/FNRS"},{"code":"ODS","name":"Oddysey","region":"SA","logo":"https://corestats.pro/static/logo/8a47d558-2ace-44b2-a2a5-ab0fc5635dc5.png","winRate":"56.8%","wins":"464","matches":"817","page":"https://corestats.pro/team/ODS"},{"code":"TLF","name":"The Lethal Force","region":"EMEA","logo":"https://corestats.pro/api/assets/6a3eed6d740930c04b83b666","winRate":"44.4%","wins":"352","matches":"792","page":"https://corestats.pro/team/TLF"},{"code":"SXS","name":"Skepsis Gaming","region":"EMEA","logo":"https://corestats.pro/static/logo/12a78e6f-d321-4d39-a23b-f786824711c5.png","winRate":"48.2%","wins":"340","matches":"705","page":"https://corestats.pro/team/SXS"},{"code":"OCXD","name":"OCX Division","region":"SA","logo":"https://corestats.pro/api/assets/6a6472f9357205e971c413dd","winRate":"60.6%","wins":"422","matches":"696","page":"https://corestats.pro/team/OCXD"},{"code":"VIC","name":"Vic Day","region":"NA","logo":"https://corestats.pro/static/logo/dc779011-f376-4e5e-8264-11a8ded7dab1.png","winRate":"41.7%","wins":"270","matches":"647","page":"https://corestats.pro/team/VIC"},{"code":"NAME","name":"Nameless","region":"NA","logo":"https://corestats.pro/api/assets/6a4aa5442593315cd0deb880","winRate":"44.8%","wins":"261","matches":"582","page":"https://corestats.pro/team/NAME"},{"code":"FZ2","name":"Frenzy Academy","region":"EA","logo":"https://corestats.pro/static/logo/1ef3f8c5-348b-418b-9bac-8b4f8d81f25e.png","winRate":"49%","wins":"279","matches":"569","page":"https://corestats.pro/team/FZ2"},{"code":"2012","name":"F/A 2012","region":"EMEA","logo":"https://corestats.pro/api/assets/6a612de7357205e971c413cf","winRate":"73.2%","wins":"342","matches":"467","page":"https://corestats.pro/team/2012"},{"code":"BC","name":"BC* Gaming EU","region":"EMEA","logo":"https://corestats.pro/static/logo/253d71a3-8aac-4d57-8c1a-5c443ea6cc76.png","winRate":"62.9%","wins":"291","matches":"463","page":"https://corestats.pro/team/BC"},{"code":"TL","name":"Toxic Lotus","region":"CN","logo":"https://corestats.pro/api/assets/6a612f02357205e971c413d1","winRate":"45.8%","wins":"205","matches":"448","page":"https://corestats.pro/team/TL"},{"code":"K13","name":"K13 Esports","region":"EMEA","logo":"https://corestats.pro/api/assets/6a418195740930c04b83b669","winRate":"54.7%","wins":"237","matches":"433","page":"https://corestats.pro/team/K13"},{"code":"ZEN","name":"Zenith Esports","region":"EMEA","logo":"https://corestats.pro/static/logo/8de3d349-96e7-4eaa-a1a5-ab668833cf1a.png","winRate":"56.7%","wins":"236","matches":"416","page":"https://corestats.pro/team/ZEN"},{"code":"SKCS","name":"SKCalalas","region":"SA","logo":"https://corestats.pro/static/logo/67aa651c-6337-43cc-b1b1-238203626f3d.png","winRate":"57.8%","wins":"197","matches":"341","page":"https://corestats.pro/team/SKCS"},{"code":"TGRB","name":"F/A Togrubi","region":"EMEA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"55.4%","wins":"158","matches":"285","page":"https://corestats.pro/team/TGRB"},{"code":"CGO","name":"F/A CGO","region":"EMEA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"48.7%","wins":"133","matches":"273","page":"https://corestats.pro/team/CGO"},{"code":"MOMO","name":"F/A MOMO","region":"NA","logo":"https://corestats.pro/api/assets/6a6130ed357205e971c413d3","winRate":"38.3%","wins":"98","matches":"256","page":"https://corestats.pro/team/MOMO"},{"code":"WWL","name":"WWL","region":"EA","logo":"https://corestats.pro/api/assets/6a83f406dc378720e2ac5a8a","winRate":"51.6%","wins":"127","matches":"246","page":"https://corestats.pro/team/WWL"},{"code":"TLB2","name":"Talents Lab Academy","region":"EMEA","logo":"https://corestats.pro/api/assets/6a8c61633232b5c2ec9b4901","winRate":"52.4%","wins":"100","matches":"191","page":"https://corestats.pro/team/TLB2"},{"code":"ZRT","name":"F/A Zurita Gang","region":"SA","logo":"https://corestats.pro/static/logo/c713eb81-8f3f-4027-acc5-3a8bbc1d9416.png","winRate":"43.5%","wins":"70","matches":"161","page":"https://corestats.pro/team/ZRT"},{"code":"0PING","name":"0 Ping Merchants","region":"SAS","logo":"https://corestats.pro/api/assets/6a80d2eae7be4fd9c4c011dd","winRate":"52.1%","wins":"75","matches":"144","page":"https://corestats.pro/team/0PING"},{"code":"AMN","name":"Amnesia Esports","region":"NA","logo":"https://corestats.pro/api/assets/6a80cd23e7be4fd9c4c011db","winRate":"36.1%","wins":"52","matches":"144","page":"https://corestats.pro/team/AMN"},{"code":"SKCEA","name":"SKCalalas EA","region":"EA","logo":"https://corestats.pro/static/logo/bee30aac-f59f-4f69-b9a4-3033ec787c15.png","winRate":"59.2%","wins":"77","matches":"130","page":"https://corestats.pro/team/SKCEA"},{"code":"AXR","name":"Ace Xero","region":"CN","logo":"https://corestats.pro/static/logo/10ca019f-58ec-4d8c-81b9-9cec704f59cd.png","winRate":"39.2%","wins":"40","matches":"102","page":"https://corestats.pro/team/AXR"},{"code":"AQL","name":"AQL","region":"EMEA","logo":"https://corestats.pro/api/assets/6a8c61673232b5c2ec9b4903","winRate":"83.2%","wins":"79","matches":"95","page":"https://corestats.pro/team/AQL"},{"code":"NOVA","name":"NOVA Esports","region":"NA","logo":"https://corestats.pro/api/assets/6a4a6f6d2593315cd0deb77a","winRate":"50%","wins":"44","matches":"88","page":"https://corestats.pro/team/NOVA"},{"code":"MAD","name":"Madrid","region":"EMEA","logo":"https://corestats.pro/api/assets/6a83fe29a251ed377818da6b","winRate":"31%","wins":"27","matches":"87","page":"https://corestats.pro/team/MAD"},{"code":"RED","name":"RED Canids","region":"SA","logo":"https://corestats.pro/api/assets/6a616954357205e971c413d7","winRate":"68.2%","wins":"45","matches":"66","page":"https://corestats.pro/team/RED"},{"code":"WW","name":"WW","region":"EMEA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"34.8%","wins":"16","matches":"46","page":"https://corestats.pro/team/WW"},{"code":"TLF2","name":"The Lethal Force Academy","region":"EMEA","logo":"https://corestats.pro/api/assets/6a3eed6d740930c04b83b666","winRate":"39.5%","wins":"17","matches":"43","page":"https://corestats.pro/team/TLF2"},{"code":"DZ","name":"Daycare Zero","region":"SA","logo":"https://corestats.pro/api/assets/6a840483d1da55056a54ccf8","winRate":"56.1%","wins":"23","matches":"41","page":"https://corestats.pro/team/DZ"},{"code":"BIZZA","name":"F/A BIZZA","region":"EMEA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"44.4%","wins":"16","matches":"36","page":"https://corestats.pro/team/BIZZA"},{"code":"DES","name":"DeSienzá","region":"EMEA","logo":"https://corestats.pro/api/assets/6a770806e7be4fd9c4c011d6","winRate":"52%","wins":"13","matches":"25","page":"https://corestats.pro/team/DES"},{"code":"TOC","name":"Trick Of China","region":"CN","logo":"https://corestats.pro/api/assets/6a8771803232b5c2ec9b48fe","winRate":"41.7%","wins":"10","matches":"24","page":"https://corestats.pro/team/TOC"},{"code":"SLG","name":"Seventh Letter Gaming","region":"SAS","logo":"https://corestats.pro/api/assets/6a9255e7be29bab0efa5a409","winRate":"60%","wins":"12","matches":"20","page":"https://corestats.pro/team/SLG"},{"code":"IDI","name":"F/A Idi Nahui","region":"EMEA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"42.9%","wins":"6","matches":"14","page":"https://corestats.pro/team/IDI"},{"code":"AL","name":"Acre Lovers","region":"SA","logo":"https://corestats.pro/static/logo/ba3b2112-6bfc-407a-b655-591b69495adf.png","winRate":"0%","wins":"0","matches":"0","page":"https://corestats.pro/team/AL"},{"code":"BOB","name":"F/A Bobby","region":"NA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"0%","wins":"0","matches":"0","page":"https://corestats.pro/team/BOB"},{"code":"GLB","name":"Glory Buama","region":"EMEA","logo":"https://corestats.pro/api/assets/6a4dc657d0641a6d7a549149","winRate":"0%","wins":"0","matches":"0","page":"https://corestats.pro/team/GLB"},{"code":"PCNG","name":"Pizza Congelada F/A","region":"SA","logo":"https://corestats.pro/static/logo/7a7b79a1-f6cf-4561-a4f9-d20e41784237.png","winRate":"0%","wins":"0","matches":"0","page":"https://corestats.pro/team/PCNG"},{"code":"TTPD","name":"Topa Tudo Por Dinheiro","region":"SA","logo":"https://corestats.pro/static/logo/38df5847-877d-41d8-b0c9-f56ac97e36cc.png","winRate":"0%","wins":"0","matches":"0","page":"https://corestats.pro/team/TTPD"}];
+let corestatsTeams=CORESTATS_TEAM_SNAPSHOT.slice();
+
+const QUESTION_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect width="1000" height="1000" fill="#111214"/><text x="500" y="535" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-family="Arial Black,Arial,sans-serif" font-size="690" font-weight="900">?</text></svg>';
+const QUESTION_IMAGE='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(QUESTION_SVG);
+const blankSlot=()=>({name:'',id:'',image:''});
+const blankState=()=>({
+  teams:{left:{name:'',abbr:'',logo:''},right:{name:'',abbr:'',logo:''}},
+  map:{name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false},
+  questionSlot:'',slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,blankSlot()])),
+  colors:{blue:'#315fdf',red:'#e95342',paper:'#f4f4f0'}
+});
+let state=blankState();
+let brawlers=[];let maps=[];let activeMapPool='ranked';let activeMapMode='ALL';let activeTeamRegion='ALL';
+const TEAM_REGIONS=[
+  {code:'ALL',label:'전체'},{code:'EA',label:'동아시아'},{code:'EMEA',label:'EMEA'},
+  {code:'NA',label:'북미'},{code:'SA',label:'남미'},{code:'SEA',label:'동남아'},
+  {code:'CN',label:'중국'},{code:'SAS',label:'남아시아'}
+];
+
+function normalize(s){return String(s||'').toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9가-힣]+/g,' ').trim()}
+function modePresetByName(name){const n=normalize(name);return MODE_PRESETS.find(x=>normalize(x.name)===n||normalize(x.ko)===n)}
+function poolNames(pool){const p=pool==='ranked'?RANKED_POOL:BSC_POOL;return new Set(Object.values(p).flat().map(normalize))}
+function mapModeName(m){return m?.gameMode?.name||m?.gameMode?.hash||m?.mode||''}
+function mapImage(m){return m?.imageUrl||m?.image|| (m?.id?`https://cdn.brawlify.com/maps/regular/${m.id}.png`:'')}
+const BRAWLER_PORTRAIT_ROOT='https://cdn.brawlify.com/brawlers/portraits/';
+function brawlerImage(b){return b?.id?`${BRAWLER_PORTRAIT_ROOT}${b.id}.png`:(b?.imageUrl2||b?.imageUrl||b?.imageUrl3||'')}
+function brawlerThumb(b){return brawlerImage(b)}
+function brawlerKoName(b){const raw=String(b?.name||'').trim();const key=raw.toUpperCase().replace(/’/g,"'");return BRAWLER_KO[key]||raw}
+function mapKoName(m){const raw=String(m?.name||'').trim();return MAP_KO[raw.toUpperCase().replace(/’/g,"'")]||raw}
+function corsImageUrl(src){const s=String(src||'');return /^https:\/\/corestats\.pro\//i.test(s)?`https://wsrv.nl/?url=${encodeURIComponent(s)}&output=png`:s}
+function setImg(img,src){img.crossOrigin='anonymous';if(!src){img.removeAttribute('src');img.style.display='none';return}img.src=corsImageUrl(src);img.style.display='block';img.onerror=()=>img.style.display='none'}
+function safeClone(o){return JSON.parse(JSON.stringify(o))}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
+function load(){
+  const h=location.hash.startsWith('#s=')?location.hash.slice(3):'';
+  if(h){try{return decodeState(h)}catch(e){console.warn(e)}}
+  try{const x=localStorage.getItem(STORAGE_KEY);if(x)return {...blankState(),...JSON.parse(x)}}catch{}
+  return blankState();
+}
+function encodeState(o){const bytes=new TextEncoder().encode(JSON.stringify(o));let s='';bytes.forEach(b=>s+=String.fromCharCode(b));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function decodeState(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const bin=atob(s);return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))))}
+function shareUrl(o=state,preview=false){const base=location.href.split('#')[0].split('?')[0];return `${base}${preview?'?preview=1':''}#s=${encodeState(o)}`}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1800)}
+async function copy(text,msg){try{await navigator.clipboard.writeText(text);toast(msg)}catch{prompt('아래 링크를 복사하세요.',text)}}
+
+function makeAsset(slot){const src=slot?.id?`${BRAWLER_PORTRAIT_ROOT}${slot.id}.png`:(slot?.image||'');const d=document.createElement('div');d.className='asset'+(src?'':' empty');if(src){const img=document.createElement('img');img.className='brawler-portrait';setImg(img,src);img.alt=slot.name||'';d.appendChild(img)}return d}
+function makeQuestionMark(alt='미스테리'){const q=document.createElement('div');q.className='question-mark';const img=document.createElement('img');img.src=QUESTION_IMAGE;img.alt=alt;q.appendChild(img);return q}
+function makeMysteryCard(label,isMap=false){const b=document.createElement('button');b.className=`card${isMap?' map-card':''} mystery-card`;b.innerHTML=`<img src="${QUESTION_IMAGE}" alt="?"><div class="label">${esc(label)}</div>`;return b}
+function renderSlot(k){const host=document.getElementById(k);host.innerHTML='';if(state.questionSlot===k&&PICK_SLOTS.includes(k))host.appendChild(makeQuestionMark('미스테리 픽'));else host.appendChild(makeAsset(state.slots[k]))}
+function renderMap(){mapAsset.querySelector('.question-mark')?.remove();if(state.map?.mystery){setImg(mapImg,'');mapAsset.classList.remove('empty');mapAsset.appendChild(makeQuestionMark('미스테리 맵'))}else{setImg(mapImg,state.map?.image||'');mapAsset.classList.toggle('empty',!state.map?.image)}}
+function renderLogo(id,team){const host=document.getElementById(id);host.innerHTML='';host.classList.toggle('empty',!team.logo);if(team.logo){const img=document.createElement('img');setImg(img,team.logo);img.alt=team.name||'';host.appendChild(img)}}
+function render(){
+  document.documentElement.style.setProperty('--blue',state.colors?.blue||'#315fdf');
+  document.documentElement.style.setProperty('--red',state.colors?.red||'#e95342');
+  document.documentElement.style.setProperty('--paper',state.colors?.paper||'#f4f4f0');
+  document.documentElement.style.setProperty('--mode',state.map?.modeColor||'#7138dc');
+  leftTeamName.textContent=state.teams.left.name||'';rightTeamName.textContent=state.teams.right.name||'';leftAbbr.textContent=state.teams.left.abbr||'';rightAbbr.textContent=state.teams.right.abbr||'';
+  renderLogo('leftLogoCell',state.teams.left);renderLogo('rightLogoCell',state.teams.right);
+  mapTitle.textContent=state.map?.mystery?'미스테리 맵':(state.map?.name||'');renderMap();
+  setImg(modeIconImg,state.map.modeIcon||'');modeIconCell.classList.toggle('empty',!state.map.modeIcon);
+  ALL_SLOTS.forEach(renderSlot);save();resizePreview();
+}
+
+const modalBackdrop=document.getElementById('modalBackdrop'),modalBody=document.getElementById('modalBody');
+function openModal(title,sub=''){modalTitle.textContent=title;modalSub.textContent=sub;modalBody.innerHTML='';modalBackdrop.classList.add('open')}
+function closeModal(){modalBackdrop.classList.remove('open')}
+modalClose.onclick=closeModal;modalBackdrop.addEventListener('click',e=>{if(e.target===modalBackdrop)closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+function openBrawler(slotKey){
+  openModal(SLOT_NAMES[slotKey],'브롤러를 검색하거나 초상화를 눌러 선택하세요.');
+  modalBody.innerHTML=`<div class="searchbar"><input id="brawlerSearch" placeholder="브롤러 한국어/영문 이름 검색"></div><div id="brawlerGrid" class="grid"></div><div class="actions"><button class="action red" id="clearSlot">이 칸 비우기</button></div>`;
+  const search=document.getElementById('brawlerSearch'),grid=document.getElementById('brawlerGrid');
+  const draw=()=>{
+    const q=normalize(search.value);
+    const list=brawlers.filter(b=>{const ko=brawlerKoName(b);return !q||normalize(b.name).includes(q)||normalize(ko).includes(q)});
+    grid.innerHTML='';
+    if(PICK_SLOTS.includes(slotKey)){
+      const selected=state.questionSlot===slotKey;
+      const mysteryBtn=makeMysteryCard('미스테리 픽');
+      mysteryBtn.classList.toggle('selected',selected);mysteryBtn.setAttribute('aria-pressed',String(selected));
+      mysteryBtn.onclick=()=>{state.slots[slotKey]=blankSlot();state.questionSlot=selected?'':slotKey;render();closeModal()};
+      grid.appendChild(mysteryBtn);
+    }
+    if(!brawlers.length){grid.insertAdjacentHTML('beforeend','<div class="loading">브롤러 목록을 불러오는 중…</div>');return}
+    if(!list.length){grid.insertAdjacentHTML('beforeend','<div class="empty-result">검색 결과가 없습니다.</div>');return}
+    list.sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko')).forEach(b=>{
+      const btn=document.createElement('button'),id=String(b.id||''),img=brawlerImage(b),thumb=brawlerThumb(b),ko=brawlerKoName(b);
+      const selected=state.questionSlot!==slotKey&&String(state.slots[slotKey]?.id||'')===id;
+      btn.className='card';btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));
+      btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(thumb)}" alt=""><div class="label">${esc(ko)}</div><div class="sub-label">${esc(b.name||'')}</div>`;
+      btn.onclick=()=>{state.questionSlot=state.questionSlot===slotKey?'':state.questionSlot;state.slots[slotKey]=selected?blankSlot():{name:ko,id,image:img};render();closeModal()};
+      grid.appendChild(btn);
+    });
+  };
+  search.oninput=draw;draw();
+  document.getElementById('clearSlot').onclick=()=>{state.slots[slotKey]=blankSlot();if(state.questionSlot===slotKey)state.questionSlot='';render();closeModal()};
+}
+
+function modeTabs(){return `<button class="tab ${activeMapMode==='ALL'?'active':''}" data-mode="ALL">전체</button>`+MODE_PRESETS.map(m=>`<button class="tab ${activeMapMode===m.name?'active':''}" data-mode="${escAttr(m.name)}">${m.ko}</button>`).join('')}
+function clearMapSelection(){state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false}}
+function openMap(){
+  openModal('맵 선택','경쟁전 / BSC / 전체 맵을 이미지로 선택합니다.');
+  modalBody.innerHTML=`<div class="note"><b>경쟁전</b>: 2026년 8월 공개 24맵 풀. <b>BSC</b>: 2026년 8월 월별 파이널에 공개된 BSC 디사이더 맵 세트. 전체 탭에서는 모든 맵을 한국어/영문 이름으로 검색할 수 있습니다.</div><div class="tabs" id="poolTabs"><button class="tab ${activeMapPool==='ranked'?'active':''}" data-pool="ranked">경쟁전</button><button class="tab ${activeMapPool==='bsc'?'active':''}" data-pool="bsc">BSC</button><button class="tab ${activeMapPool==='all'?'active':''}" data-pool="all">전체 맵</button></div><div class="tabs" id="modeTabs">${modeTabs()}</div><div class="searchbar"><input id="mapSearch" placeholder="맵 이름 검색"></div><div id="mapGrid" class="grid"></div><div class="actions"><button class="action red" id="clearMap">맵/모드 비우기</button></div>`;
+  const search=document.getElementById('mapSearch'),grid=document.getElementById('mapGrid');
+  const draw=()=>{
+    const q=normalize(search.value);const allowed=activeMapPool==='all'?null:poolNames(activeMapPool);
+    let list=maps.filter(m=>{const name=normalize(m.name),ko=normalize(mapKoName(m));const mode=mapModeName(m);return(!allowed||allowed.has(name))&&(activeMapMode==='ALL'||normalize(mode)===normalize(activeMapMode))&&(!q||name.includes(q)||ko.includes(q))});
+    grid.innerHTML='';
+    const mysterySelected=Boolean(state.map?.mystery),mysteryBtn=makeMysteryCard('미스테리 맵',true);
+    mysteryBtn.classList.toggle('selected',mysterySelected);mysteryBtn.setAttribute('aria-pressed',String(mysterySelected));
+    mysteryBtn.onclick=()=>{if(mysterySelected)clearMapSelection();else state.map={name:'미스테리 맵',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:true};render();closeModal()};grid.appendChild(mysteryBtn);
+    if(!maps.length){grid.insertAdjacentHTML('beforeend','<div class="loading">맵 데이터를 불러오는 중…</div>');return}
+    if(!list.length){grid.insertAdjacentHTML('beforeend','<div class="empty-result">현재 필터에 맞는 맵이 없습니다.<br>전체 맵 탭에서 검색해 보세요.</div>');return}
+    list.sort((a,b)=>mapKoName(a).localeCompare(mapKoName(b),'ko')).forEach(m=>{const mode=mapModeName(m);const preset=modePresetByName(mode);const img=mapImage(m);const ko=mapKoName(m);const btn=document.createElement('button');const selected=!state.map?.mystery&&Boolean(img)&&state.map?.image===img;btn.className='card map-card';btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(img)}" alt=""><div class="label"><span class="mode-dot" style="background:${preset?.color||'#888'}"></span>${esc(ko)}</div><div class="sub-label">${esc(m.name||'')}</div>`;btn.onclick=()=>selectMap(m);grid.appendChild(btn)})
+  };
+  const poolTabsEl=document.getElementById('poolTabs');
+  poolTabsEl.onclick=e=>{const b=e.target.closest('[data-pool]');if(!b)return;activeMapPool=b.dataset.pool;poolTabsEl.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));draw()};
+  function modeTabsHtml(){return modeTabs()}
+  function bindModeTabClick(fn){document.getElementById('modeTabs').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;activeMapMode=b.dataset.mode;document.getElementById('modeTabs').innerHTML=modeTabsHtml();bindModeTabClick(fn);fn()}}
+  bindModeTabClick(draw);search.oninput=draw;draw();document.getElementById('clearMap').onclick=()=>{clearMapSelection();render();closeModal()};
+}
+function selectMap(m){const mode=mapModeName(m),p=modePresetByName(mode),image=mapImage(m);if(!state.map?.mystery&&Boolean(image)&&state.map?.image===image)clearMapSelection();else{state.map.name=mapKoName(m);state.map.image=image;state.map.modeName=p?.ko||mode||'';state.map.modeIcon=m?.gameMode?.imageUrl||p?.icon||'';state.map.modeColor=m?.gameMode?.color||p?.color||'#7138dc';state.map.mystery=false}render();closeModal()}
+
+function openMode(){
+  openModal('모드 선택','모드에 따라 맵 이름 색상도 자동으로 바뀝니다.');
+  modalBody.innerHTML=`<div class="grid" id="modeGrid"></div><div class="actions"><button class="action red" id="clearMode">모드 비우기</button></div>`;
+  const modeGridEl=document.getElementById('modeGrid');
+  MODE_PRESETS.forEach(m=>{const b=document.createElement('button'),selected=state.map.modeName===m.ko;b.className='card';b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));b.innerHTML=`<img crossorigin="anonymous" style="object-fit:contain;padding:13px;background:#fff" src="${escAttr(m.icon)}"><div class="label"><span class="mode-dot" style="background:${m.color}"></span>${m.ko}</div>`;b.onclick=()=>{if(selected){state.map.modeName='';state.map.modeIcon='';state.map.modeColor='#7138dc'}else{state.map.modeName=m.ko;state.map.modeIcon=m.icon;state.map.modeColor=m.color}render();closeModal()};modeGridEl.appendChild(b)});
+  document.getElementById('clearMode').onclick=()=>{state.map.modeName='';state.map.modeIcon='';state.map.modeColor='#7138dc';render();closeModal()};
+}
+
+function normalizeCorestatsRegion(value){const raw=String(value||'').trim();const key=raw.toUpperCase();const aliases={'EAST ASIA':'EA','EUROPE':'EMEA','EUROPE, MIDDLE EAST & AFRICA':'EMEA','NORTH AMERICA':'NA','SOUTH AMERICA':'SA','SOUTHEAST ASIA':'SEA','SOUTH EAST ASIA':'SEA','CHINA':'CN','SOUTH ASIA':'SAS'};return aliases[key]||key}
+function teamRegionTabs(){return TEAM_REGIONS.map(r=>`<button class="tab ${activeTeamRegion===r.code?'active':''}" data-team-region="${r.code}">${r.label}</button>`).join('')}
+function normalizeCorestatsTeam(x){
+  if(!x)return null;
+  const name=String(x.name||x.teamName||x.title||x.code||'').trim();
+  const code=String(x.code||x.shortName||x.abbr||name).trim();
+  let logo=String(x.logo||x.logoUrl||x.logo_url||x.image||x.imageUrl||'').trim();
+  if(logo&&logo.startsWith('/'))logo='https://corestats.pro'+logo;
+  if(!name&&!code)return null;
+  return {name:name||code,code:code||name,logo,region:normalizeCorestatsRegion(x.region||x.zone||''),winRate:String(x.winRate||x.win_rate||'').trim(),wins:String(x.wins||'').trim(),matches:String(x.matches||x.totalMatches||x.total_matches||'').trim(),page:x.page||`https://corestats.pro/team/${encodeURIComponent(code||name)}`};
+}
+function extractCorestatsTeamsFromHtml(html){
+  const out=[];const doc=new DOMParser().parseFromString(html,'text/html');
+  doc.querySelectorAll('a[href*="/team/"]').forEach(a=>{
+    const href=a.getAttribute('href')||'';const code=decodeURIComponent(href.split('/team/')[1]?.split(/[?#/]/)[0]||'').trim();if(!code||code.includes('$'))return;
+    let box=a;for(let i=0;i<5&&box.parentElement;i++){if(box.querySelector?.('img'))break;box=box.parentElement}
+    const img=box.querySelector?.('img');let logo=img?.getAttribute('src')||img?.getAttribute('data-src')||'';
+    if(logo&&logo.startsWith('/'))logo='https://corestats.pro'+logo;
+    const text=(a.textContent||box.textContent||'').replace(/\s+/g,' ').trim();out.push({name:text&&text.length<60?text:code,code,logo});
+  });
+  const text=html.replace(/\\u002F/g,'/').replace(/\\\//g,'/');
+  const re=/[\"'](?:name|teamName)[\"']\s*:\s*[\"']([^\"']+)[\"'][\s\S]{0,600}?[\"'](?:code|abbr|shortName)[\"']\s*:\s*[\"']([^\"']+)[\"'][\s\S]{0,900}?[\"'](?:logo|logoUrl|image|imageUrl)[\"']\s*:\s*[\"']([^\"']+)[\"']/gi;
+  let m;while((m=re.exec(text))){out.push({name:m[1],code:m[2],logo:m[3].startsWith('/')?'https://corestats.pro'+m[3]:m[3]})}
+  const uniq=new Map();out.map(normalizeCorestatsTeam).filter(Boolean).forEach(t=>{const k=(t.code||t.name).toUpperCase();const old=uniq.get(k);if(!old||(!old.logo&&t.logo))uniq.set(k,t)});return [...uniq.values()];
+}
+async function loadCorestatsTeams(force=false){
+  if(corestatsTeams.length&&!force)return corestatsTeams;
+  const target='https://corestats.pro/api/teams';
+  const urls=[target,'https://api.allorigins.win/raw?url='+encodeURIComponent(target)];
+  for(const url of urls){try{const r=await fetch(url,{mode:'cors',cache:'no-store'});if(!r.ok)continue;const text=await r.text();let found=[];try{const j=JSON.parse(text);const list=Array.isArray(j)?j:(j.teams||j.data||j.list||[]);found=list.map(normalizeCorestatsTeam).filter(Boolean)}catch{found=extractCorestatsTeamsFromHtml(text)}if(found.length){corestatsTeams=found;return found}}catch(e){console.warn('Corestats fetch',url,e)}}
+  corestatsTeams=CORESTATS_TEAM_SNAPSHOT.map(normalizeCorestatsTeam).filter(Boolean);return corestatsTeams;
+}
+function drawCorestatsTeams(root,teams,onPick){
+  root.innerHTML='';if(!teams.length){root.innerHTML='<div class="empty-result">팀을 찾지 못했습니다.</div>';return}
+  teams.forEach(t=>{const b=document.createElement('button');b.className='card';const info=[t.code,t.region,t.winRate?`${t.winRate} 승률`:'',t.matches?`${t.matches}전`:''].filter(Boolean).join(' · ');b.title=`${t.name||t.code}${info?' · '+info:''}`;b.innerHTML=`${t.logo?`<img crossorigin="anonymous" src="${escAttr(corsImageUrl(t.logo))}" alt="">`:'<div style="height:95px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:950;background:#23272e">'+esc(t.code||'?')+'</div>'}<div class="label">${esc(t.name||t.code)}</div><div class="sub-label">${esc(info||'Corestats')}</div>`;b.onclick=()=>onPick(t);root.appendChild(b)})
+}
+function openTeam(side){
+  const team=state.teams[side];openModal(side==='left'?'왼쪽 팀':'오른쪽 팀','Corestats 프로팀 로고를 고르거나 직접 업로드할 수 있습니다.');
+  modalBody.innerHTML=`<div class="form"><div class="row2"><div class="field"><label>팀명</label><input id="teamName" value="${escAttr(team.name)}" placeholder="예: FENNEL"></div><div class="field"><label>약자</label><input id="teamAbbr" value="${escAttr(team.abbr)}" placeholder="예: FL"></div></div><div class="field"><label>팀 로고 URL</label><input id="teamLogo" value="${escAttr(team.logo.startsWith('data:')?'':team.logo)}" placeholder="이미지 주소를 직접 붙여넣기"><div class="hint">Corestats 로고를 아래에서 선택하면 자동 입력됩니다.</div></div><div class="upload"><input type="file" id="logoUpload" accept="image/*"><label for="logoUpload">로고 직접 업로드</label><div class="hint">업로드 이미지는 공유 링크에 포함될 수 있도록 자동 축소합니다.</div></div></div><div style="height:1px;background:#30343c;margin:16px 0"></div><div class="tabs" id="teamRegionTabs">${teamRegionTabs()}</div><div class="searchbar"><input id="corestatsSearch" placeholder="선택한 지역의 Corestats 팀 검색"></div><div id="corestatsState" class="corestats-state">Corestats 팀 정보를 불러오는 중…</div><div id="corestatsTeamGrid" class="grid team-grid"></div><div class="actions"><button class="action primary" id="saveTeam">적용</button><button class="action link" id="reloadCorestats">Corestats 다시 불러오기</button><button class="action link" id="corestatsBtn">Corestats 전체 팀 열기</button><button class="action red" id="clearTeam">팀 정보 비우기</button></div>`;
+  let uploaded=team.logo.startsWith('data:')?team.logo:'';
+  const logoUploadEl=document.getElementById('logoUpload'),teamNameEl=document.getElementById('teamName'),teamAbbrEl=document.getElementById('teamAbbr'),teamLogoEl=document.getElementById('teamLogo'),csSearch=document.getElementById('corestatsSearch'),csGrid=document.getElementById('corestatsTeamGrid'),csState=document.getElementById('corestatsState'),regionTabs=document.getElementById('teamRegionTabs');
+  let drawTeams=()=>{};
+  const isCurrentTeam=t=>normalize(teamNameEl.value)===normalize(t.name||t.code)&&normalize(teamAbbrEl.value)===normalize(t.code);
+  const pick=t=>{if(isCurrentTeam(t)){teamNameEl.value='';teamAbbrEl.value='';teamLogoEl.value='';uploaded='';toast('팀 선택을 해제했습니다.')}else{teamNameEl.value=t.name||t.code||'';teamAbbrEl.value=t.code||'';teamLogoEl.value=t.logo||'';uploaded='';toast('Corestats 팀을 선택했습니다.')}drawTeams()};
+  const refresh=async(force=false)=>{csState.className='corestats-state';csState.textContent='Corestats 팀 정보를 불러오는 중…';const list=await loadCorestatsTeams(force);drawTeams=()=>{const q=normalize(csSearch.value);const filtered=list.filter(t=>(activeTeamRegion==='ALL'||normalizeCorestatsRegion(t.region)===activeTeamRegion)&&(!q||normalize(t.name).includes(q)||normalize(t.code).includes(q)||normalize(t.region).includes(q)));drawCorestatsTeams(csGrid,filtered,pick)};drawTeams();csSearch.oninput=drawTeams;const withLogo=list.filter(x=>x.logo).length;if(withLogo){csState.className='corestats-state ok';csState.textContent=`Corestats 팀 ${list.length}개와 로고 ${withLogo}개를 불러왔습니다.`}else{csState.className='corestats-state err';csState.textContent='팀 정보는 불러왔지만 로고 주소를 확인하지 못했습니다. 로고 URL 또는 직접 업로드를 사용해 주세요.'}};
+  regionTabs.onclick=e=>{const b=e.target.closest('[data-team-region]');if(!b)return;activeTeamRegion=b.dataset.teamRegion;regionTabs.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));drawTeams()};
+  logoUploadEl.onchange=async e=>{if(e.target.files[0]){uploaded=await resizeUpload(e.target.files[0]);teamLogoEl.value='';toast('로고 업로드 완료')}};
+  document.getElementById('saveTeam').onclick=()=>{team.name=teamNameEl.value.trim();team.abbr=teamAbbrEl.value.trim();team.logo=uploaded||teamLogoEl.value.trim();render();closeModal()};
+  document.getElementById('reloadCorestats').onclick=()=>refresh(true);
+  document.getElementById('corestatsBtn').onclick=()=>window.open('https://corestats.pro/teams','_blank','noopener');
+  document.getElementById('clearTeam').onclick=()=>{state.teams[side]={name:'',abbr:'',logo:''};render();closeModal()};
+  refresh(false);
+}
+function resizeUpload(file){return new Promise((resolve,reject)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);resolve(c.toDataURL('image/webp',.88))};img.onerror=reject;img.src=u})}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escAttr(s){return esc(s)}
+
+async function loadBrawlers(){const urls=['https://api.brawlapi.com/v1/brawlers','https://brawlapi-v1.pages.dev/v1/brawlers'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){brawlers=list.filter(x=>x&&x.released!==false);brawlers.sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));return}}catch(e){console.warn('brawlers',url,e)}}toast('브롤러 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
+async function loadMaps(){const urls=['https://api.brawlapi.com/v1/maps','https://brawlapi-v1.pages.dev/v1/maps'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){maps=list;return}}catch(e){console.warn('maps',url,e)}}toast('맵 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
+
+function quizState(){const c=safeClone(state);if(c.questionSlot&&c.slots[c.questionSlot])c.slots[c.questionSlot]=blankSlot();return c}
+function waitForImageReady(img){
+  if(img.complete)return img.decode?img.decode().catch(()=>{}):Promise.resolve();
+  return new Promise(resolve=>{let done=false;const finish=()=>{if(done)return;done=true;resolve()};img.addEventListener('load',finish,{once:true});img.addEventListener('error',finish,{once:true});setTimeout(finish,8000)});
+}
+async function waitForCanvasAssets(root){
+  try{if(document.fonts?.ready)await document.fonts.ready}catch{}
+  await Promise.all([...root.querySelectorAll('img')].filter(img=>img.style.display!=='none').map(waitForImageReady));
+}
+function exportObjectPositionOffset(token,freeSpace){
+  const value=String(token||'50%').toLowerCase();
+  if(value==='left'||value==='top')return 0;if(value==='right'||value==='bottom')return freeSpace;if(value==='center')return freeSpace*.5;
+  if(value.endsWith('%'))return freeSpace*(parseFloat(value)||0)/100;const px=parseFloat(value);return Number.isFinite(px)?px:freeSpace*.5;
+}
+function rasterizeImageForExport(img){
+  const style=getComputedStyle(img),w=Math.round(img.offsetWidth),h=Math.round(img.offsetHeight),nw=img.naturalWidth,nh=img.naturalHeight;
+  if(style.display==='none'||!w||!h||!nw||!nh)return '';
+  const out=document.createElement('canvas');out.width=w;out.height=h;const ctx=out.getContext('2d');
+  const pl=parseFloat(style.paddingLeft)||0,pr=parseFloat(style.paddingRight)||0,pt=parseFloat(style.paddingTop)||0,pb=parseFloat(style.paddingBottom)||0;
+  const cw=Math.max(1,w-pl-pr),ch=Math.max(1,h-pt-pb),fit=style.objectFit||'fill';let dw=cw,dh=ch;
+  if(fit==='contain'||fit==='cover'||fit==='scale-down'){let scale=fit==='cover'?Math.max(cw/nw,ch/nh):Math.min(cw/nw,ch/nh);if(fit==='scale-down')scale=Math.min(1,scale);dw=nw*scale;dh=nh*scale}else if(fit==='none'){dw=nw;dh=nh}
+  const parts=String(style.objectPosition||'50% 50%').trim().split(/\s+/);let x=parts[0]||'50%',y=parts[1]||'50%';
+  if(parts.length===1){if(x==='top'||x==='bottom'){y=x;x='50%'}else y='50%'}else if((x==='top'||x==='bottom')&&(y==='left'||y==='right'||y==='center')){const swap=x;x=y;y=swap}
+  const dx=pl+exportObjectPositionOffset(x,cw-dw),dy=pt+exportObjectPositionOffset(y,ch-dh);
+  ctx.save();ctx.filter=style.filter&&style.filter!=='none'?style.filter:'none';
+  if(style.backgroundColor&&style.backgroundColor!=='transparent'&&style.backgroundColor!=='rgba(0, 0, 0, 0)'){ctx.fillStyle=style.backgroundColor;ctx.fillRect(0,0,w,h)}
+  ctx.beginPath();ctx.rect(pl,pt,cw,ch);ctx.clip();ctx.drawImage(img,dx,dy,dw,dh);ctx.restore();return out.toDataURL('image/png');
+}
+async function buildExportCanvas(){
+  const source=document.getElementById('canvas');await waitForCanvasAssets(source);const clone=source.cloneNode(true);clone.id='canvasExport';clone.style.width='1920px';clone.style.height='1080px';clone.style.transform='none';
+  clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));const sourceImages=[...source.querySelectorAll('img')],cloneImages=[...clone.querySelectorAll('img')];
+  sourceImages.forEach((img,i)=>{try{const data=rasterizeImageForExport(img);if(!data||!cloneImages[i])return;cloneImages[i].removeAttribute('srcset');cloneImages[i].removeAttribute('crossorigin');cloneImages[i].src=data;cloneImages[i].style.objectFit='fill';cloneImages[i].style.objectPosition='center';cloneImages[i].style.filter='none'}catch(e){console.warn('export image',e)}});
+  clone.querySelectorAll('.editable').forEach(el=>{el.style.transition='none';el.style.filter='none';el.style.boxShadow='none'});
+  const host=document.createElement('div');host.setAttribute('aria-hidden','true');host.style.position='fixed';host.style.left='0';host.style.top='0';host.style.width='1920px';host.style.height='1080px';host.style.zIndex='-2147483648';host.style.pointerEvents='none';host.appendChild(clone);document.body.appendChild(host);await waitForCanvasAssets(clone);return {host,canvas:clone};
+}
+async function downloadPNG(){
+  toast('이미지 생성 중…');let exportHost;
+  try{const built=await buildExportCanvas();exportHost=built.host;const c=await html2canvas(built.canvas,{backgroundColor:null,scale:1,width:1920,height:1080,windowWidth:1920,windowHeight:1080,scrollX:0,scrollY:0,useCORS:true,allowTaint:false,foreignObjectRendering:true,imageTimeout:15000,logging:false});const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='draft-quiz-'+Date.now()+'.png';a.click();a.remove();toast('PNG 저장 완료')}
+  catch(e){console.error(e);alert('PNG 생성에 실패했습니다. 외부 팀 로고가 CORS를 허용하지 않는 경우 직접 업로드한 로고를 사용해 주세요.')}
+  finally{exportHost?.remove()}
+}
+function swapSides(){[state.teams.left,state.teams.right]=[state.teams.right,state.teams.left];[['lg1','rg1'],['lg2','rg2'],['lb1','rb1'],['lb2','rb2'],['lb3','rb3'],['lp1','rp1'],['lp2','rp2'],['lp3','rp3']].forEach(([a,b])=>[state.slots[a],state.slots[b]]=[state.slots[b],state.slots[a]]);const q={lp1:'rp1',lp2:'rp2',lp3:'rp3',rp1:'lp1',rp2:'lp2',rp3:'lp3'};state.questionSlot=q[state.questionSlot]||state.questionSlot;render()}
+function resizePreview(){if(document.body.classList.contains('preview-mode')){const s=Math.min(innerWidth/1920,innerHeight/1080);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px';return}const maxW=Math.max(300,workspace.clientWidth-44);const s=Math.min(1,maxW/1920);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px'}
+
+canvas.addEventListener('click',e=>{if(document.body.classList.contains('preview-mode'))return;const slot=e.target.closest('[data-slot]');if(slot)return openBrawler(slot.dataset.slot);const team=e.target.closest('[data-team]');if(team)return openTeam(team.dataset.team);const edit=e.target.closest('[data-edit]');if(edit?.dataset.edit==='map')return openMap();if(edit?.dataset.edit==='mode')return openMode()});
+document.getElementById('previewBtn').onclick=()=>window.open(shareUrl(state,true),'_blank');document.getElementById('pngBtn').onclick=downloadPNG;document.getElementById('shareBtn').onclick=()=>copy(shareUrl(state,false),'편집 링크를 복사했습니다.');document.getElementById('quizBtn').onclick=()=>{if(!state.questionSlot){toast('먼저 픽 칸 하나를 미스테리로 설정하세요.');return}copy(shareUrl(quizState(),true),'퀴즈 링크를 복사했습니다.')};document.getElementById('swapBtn').onclick=swapSides;document.getElementById('resetBtn').onclick=()=>{if(confirm('모든 내용을 공백으로 초기화할까요?')){state=blankState();render();toast('전부 비웠습니다.')}};
+
+state=load();if(!state.slots)state=blankState();if(!state.colors)state.colors=blankState().colors;
+if(new URLSearchParams(location.search).get('preview')==='1')document.body.classList.add('preview-mode');
+render();loadBrawlers();loadMaps();addEventListener('resize',resizePreview);
+</script>
+</body>
+</html>
