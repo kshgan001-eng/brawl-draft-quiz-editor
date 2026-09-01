@@ -215,6 +215,7 @@ const blankState=()=>({
   teams:{left:{name:'',abbr:'',logo:''},right:{name:'',abbr:'',logo:''}},
   map:{name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false},
   questionSlots:[],slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,blankSlot()])),
+  mysteryAnswersByTarget:{},
   colors:{blue:'#315fdf',red:'#e95342',paper:'#f4f4f0'},
   quiz:blankQuiz()
 });
@@ -244,20 +245,39 @@ function setImg(img,src){img.crossOrigin='anonymous';if(!src){img.removeAttribut
 function safeClone(o){return JSON.parse(JSON.stringify(o))}
 function isPreviewPage(){const p=new URLSearchParams(location.search);return p.get('quiz')==='1'||p.get('preview')==='1'}
 function save(){if(isPreviewPage())return;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
+function normalizeMysteryAsset(value,target){
+  const raw=typeof value==='string'?{name:value}:(value&&typeof value==='object'?value:{}),name=String(raw.name||'').trim();if(!name)return null;
+  if(target==='map')return{name,image:String(raw.image||''),modeName:String(raw.modeName||''),modeIcon:String(raw.modeIcon||''),modeColor:String(raw.modeColor||'#7138dc')};
+  return{name,id:String(raw.id||''),image:String(raw.image||'')};
+}
+function uniqueMysteryAssets(values,target){const seen=new Set(),out=[];(Array.isArray(values)?values:[]).forEach(value=>{const asset=normalizeMysteryAsset(value,target);if(!asset)return;const key=target==='map'?normalize(asset.name):(asset.id?'id:'+asset.id:'name:'+normalize(asset.name));if(!key||seen.has(key))return;seen.add(key);out.push(asset)});return out}
 function hydrateState(raw){
   const base=blankState(),x=raw&&typeof raw==='object'?raw:{};
   const oldQuiz=x.quiz&&typeof x.quiz==='object'?x.quiz:{},oldCorrect=String(oldQuiz.correctAnswer||'').trim();
   const options=Array.isArray(oldQuiz.options)?oldQuiz.options.map(v=>typeof v==='object'&&v?{text:String(v.text??v.value??'').trim(),correct:Boolean(v.correct)}:{text:String(v||'').trim(),correct:Boolean(oldCorrect&&normalize(v)===normalize(oldCorrect))}).filter(v=>v.text):[];
   const mode=oldQuiz.mode==='input'||oldQuiz.allowInput===true?'input':'choices';
   const inputAnswers=(Array.isArray(oldQuiz.inputAnswers)?oldQuiz.inputAnswers:[oldQuiz.inputAnswer??(mode==='input'?oldCorrect:'')]).map(v=>String(v||'').trim()).filter(Boolean);
-  const mysteryAnswers=(Array.isArray(oldQuiz.mysteryAnswers)?oldQuiz.mysteryAnswers:[oldQuiz.mysteryAnswer]).map(v=>String(v||'').trim()).filter(Boolean);
+  const legacyMysteryAnswers=(Array.isArray(oldQuiz.mysteryAnswers)?oldQuiz.mysteryAnswers:[oldQuiz.mysteryAnswer]).map(v=>String(v||'').trim()).filter(Boolean);
   const questionSlots=[...(Array.isArray(x.questionSlots)?x.questionSlots:(x.questionSlot?[x.questionSlot]:[]))].filter((v,i,a)=>PICK_SLOTS.includes(v)&&a.indexOf(v)===i);
+  const hydratedMap={...base.map,...(x.map||{})},slots=Object.fromEntries(ALL_SLOTS.map(k=>[k,{...blankSlot(),...(x.slots?.[k]||{})}]));
+  const targets=[...questionSlots,...(hydratedMap.mystery?['map']:[])],rawGroups=x.mysteryAnswersByTarget&&typeof x.mysteryAnswersByTarget==='object'?x.mysteryAnswersByTarget:{},hasRawGroups=Object.keys(rawGroups).length>0,mysteryAnswersByTarget={};
+  targets.forEach(target=>{const seeded=uniqueMysteryAssets(rawGroups[target],target);if(seeded.length)mysteryAnswersByTarget[target]=seeded});
+  if(!hasRawGroups){
+    targets.forEach(target=>{const primary=target==='map'?normalizeMysteryAsset(hydratedMap,'map'):normalizeMysteryAsset(slots[target],target);if(primary)mysteryAnswersByTarget[target]=[primary]});
+    if(legacyMysteryAnswers.length){
+      if(targets.length===1)mysteryAnswersByTarget[targets[0]]=uniqueMysteryAssets([...(mysteryAnswersByTarget[targets[0]]||[]),...legacyMysteryAnswers],targets[0]);
+      else legacyMysteryAnswers.forEach((answer,index)=>{const target=targets[Math.min(index,targets.length-1)];if(target)mysteryAnswersByTarget[target]=uniqueMysteryAssets([...(mysteryAnswersByTarget[target]||[]),answer],target)});
+    }
+  }
+  targets.forEach(target=>{const first=mysteryAnswersByTarget[target]?.[0];if(!first)return;if(target==='map'){if(!hydratedMap.name||hydratedMap.name==='미스테리 맵')Object.assign(hydratedMap,first,{mystery:true})}else if(!slots[target]?.name)slots[target]={...blankSlot(),...first}});
+  const mysteryAnswers=uniqueAnswers(targets.flatMap(target=>(mysteryAnswersByTarget[target]||[]).map(v=>v.name)));
   const enabled=typeof oldQuiz.enabled==='boolean'?oldQuiz.enabled:Boolean(options.length||inputAnswers.length);
   return {
     ...base,...x,
     teams:{left:{...base.teams.left,...(x.teams?.left||{})},right:{...base.teams.right,...(x.teams?.right||{})}},
-    map:{...base.map,...(x.map||{})},
-    slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,{...blankSlot(),...(x.slots?.[k]||{})}])),
+    map:hydratedMap,
+    slots,
+    mysteryAnswersByTarget,
     colors:{...base.colors,...(x.colors||{})},
     questionSlots,
     quiz:{enabled,mode,options,inputAnswers,mysteryAnswers}
@@ -295,7 +315,8 @@ function packSharedState(o){
     else{const texts=options.map(v=>String(v?.text||'')),correct=options.map((v,i)=>v?.correct?i+1:0).filter(Boolean);packedQuiz=[quiz.enabled?1:0,0,texts,correct.length?correct:0,mysteryAnswers.length?mysteryAnswers:0]}
   }
   const questionIndexes=(Array.isArray(o?.questionSlots)?o.questionSlots:[]).map(k=>PICK_SLOTS.indexOf(k)+1).filter(Boolean),packedQuestions=questionIndexes.length>1?questionIndexes:(questionIndexes[0]||0);
-  return [4,[packTeam(teams.left),packTeam(teams.right)],packedMap,packedQuestions,packedSlots,packedColors,packedQuiz];
+  const mysteryTargets=[...(Array.isArray(o?.questionSlots)?o.questionSlots:[]),...(map.mystery?['map']:[])],packedMysteries=mysteryTargets.map(target=>{const names=uniqueAnswers((o?.mysteryAnswersByTarget?.[target]||[]).map(v=>typeof v==='string'?v:v?.name));if(!names.length)return null;return[target==='map'?0:PICK_SLOTS.indexOf(target)+1,names]}).filter(Boolean);
+  return [4,[packTeam(teams.left),packTeam(teams.right)],packedMap,packedQuestions,packedSlots,packedColors,packedQuiz,packedMysteries.length?packedMysteries:0];
 }
 function unpackSharedState(p){
   if(Array.isArray(p)&&p[0]===4){
@@ -305,7 +326,8 @@ function unpackSharedState(p){
     const packedQuestions=Array.isArray(p[3])?p[3]:(p[3]?[p[3]]:[]),questionSlots=packedQuestions.map(v=>PICK_SLOTS[Number(v)-1]).filter(Boolean);
     const packedColors=Array.isArray(p[5])?p[5]:[],packedQuiz=Array.isArray(p[6])?p[6]:[],inputMode=packedQuiz[1]===1;let quiz=blankQuiz();
     if(packedQuiz.length){const mysteryAnswers=(Array.isArray(packedQuiz[4-inputMode])?packedQuiz[4-inputMode]:packedQuiz[4-inputMode]?[packedQuiz[4-inputMode]]:[]).map(v=>String(v||''));if(inputMode)quiz={enabled:Boolean(packedQuiz[0]),mode:'input',options:[],inputAnswers:(Array.isArray(packedQuiz[2])?packedQuiz[2]:[packedQuiz[2]]).map(v=>String(v||'')).filter(Boolean),mysteryAnswers};else{const texts=Array.isArray(packedQuiz[2])?packedQuiz[2]:[],correct=new Set(Array.isArray(packedQuiz[3])?packedQuiz[3].map(Number):[]);quiz={enabled:Boolean(packedQuiz[0]),mode:'choices',options:texts.map((text,i)=>({text:String(text||''),correct:correct.has(i+1)})),inputAnswers:[],mysteryAnswers}}}
-    return {teams:{left:team(p[1]?.[0]),right:team(p[1]?.[1])},map:{name:String(packedMap[0]||''),image:unpackStateUrl(packedMap[1]||''),modeName,modeIcon,modeColor,mystery:Boolean(packedMap[3])},questionSlots,slots,colors:{blue:String(packedColors[0]||'#315fdf'),red:String(packedColors[1]||'#e95342'),paper:String(packedColors[2]||'#f4f4f0')},quiz};
+    const mysteryAnswersByTarget={};(Array.isArray(p[7])?p[7]:[]).forEach(entry=>{const target=Number(entry?.[0])===0?'map':PICK_SLOTS[Number(entry?.[0])-1],answers=(Array.isArray(entry?.[1])?entry[1]:[entry?.[1]]).map(v=>String(v||'').trim()).filter(Boolean);if(target&&answers.length)mysteryAnswersByTarget[target]=answers});
+    return {teams:{left:team(p[1]?.[0]),right:team(p[1]?.[1])},map:{name:String(packedMap[0]||''),image:unpackStateUrl(packedMap[1]||''),modeName,modeIcon,modeColor,mystery:Boolean(packedMap[3])},questionSlots,slots,mysteryAnswersByTarget,colors:{blue:String(packedColors[0]||'#315fdf'),red:String(packedColors[1]||'#e95342'),paper:String(packedColors[2]||'#f4f4f0')},quiz};
   }
   if(Array.isArray(p)&&p[0]===3){
     const team=value=>{if(!value)return{name:'',abbr:'',logo:''};if(typeof value==='string'&&value.startsWith('@')){const known=CORESTATS_TEAM_SNAPSHOT.find(x=>x.code===value.slice(1));if(known)return{name:known.name,abbr:known.code,logo:known.logo}}return{name:String(value?.[0]||''),abbr:String(value?.[1]||''),logo:unpackStateUrl(value?.[2]||'')}};
@@ -382,13 +404,31 @@ function bindBrawlerAutocomplete(input,list,onChoose){
 }
 function uniqueAnswers(values){const seen=new Set();return (values||[]).map(v=>String(v||'').trim()).filter(v=>{const key=normalize(v);if(!key||seen.has(key))return false;seen.add(key);return true})}
 function activeQuestionSlots(){return (Array.isArray(state.questionSlots)?state.questionSlots:[]).filter(k=>PICK_SLOTS.includes(k))}
-function mysteryActive(){return Boolean(activeQuestionSlots().length||state.map?.mystery)}
-function activeMysteryAnswers(){return mysteryActive()?uniqueAnswers(state.quiz?.mysteryAnswers):[]}
-function currentMysteryAnswers(){return uniqueAnswers([...activeQuestionSlots().map(k=>state.slots?.[k]?.name||''),state.map?.mystery?state.map?.name||'':''])}
-function missingMysteryCount(){return activeQuestionSlots().filter(k=>!String(state.slots?.[k]?.name||'').trim()).length+(state.map?.mystery&&!String(state.map?.name||'').trim()?1:0)}
+function activeMysteryTargets(){return [...activeQuestionSlots(),...(state.map?.mystery?['map']:[])]}
+function mysteryActive(){return activeMysteryTargets().length>0}
+function mysteryTargetAssets(target){return uniqueMysteryAssets(state.mysteryAnswersByTarget?.[target],target)}
+function mysteryTargetAnswerNames(target){return mysteryTargetAssets(target).map(v=>v.name)}
+function activeMysteryAnswers(){return uniqueAnswers(activeMysteryTargets().flatMap(mysteryTargetAnswerNames))}
+function missingMysteryCount(){return activeMysteryTargets().filter(target=>mysteryTargetAssets(target).length===0).length}
+function mysteryAssetMatches(target,left,right){const a=normalizeMysteryAsset(left,target),b=normalizeMysteryAsset(right,target);if(!a||!b)return false;if(target!=='map'&&a.id&&b.id)return a.id===b.id;return normalize(a.name)===normalize(b.name)}
+function isMysteryTargetAnswer(target,value){return mysteryTargetAssets(target).some(answer=>mysteryAssetMatches(target,answer,value))}
+function resolveMysteryAsset(target,asset){
+  const normalized=normalizeMysteryAsset(asset,target);if(!normalized)return null;
+  if(target==='map'){const found=maps.find(m=>normalize(mapKoName(m))===normalize(normalized.name));return found?{name:mapKoName(found),image:mapImage(found),modeName:modePresetByName(mapModeName(found))?.ko||mapModeName(found)||'',modeIcon:found?.gameMode?.imageUrl||modePresetByName(mapModeName(found))?.icon||'',modeColor:found?.gameMode?.color||modePresetByName(mapModeName(found))?.color||'#7138dc'}:normalized}
+  const found=brawlers.find(b=>String(b?.id||'')===normalized.id||normalize(brawlerKoName(b))===normalize(normalized.name));return found?{name:brawlerKoName(found),id:String(found.id||''),image:brawlerImage(found)}:normalized;
+}
+function setMysteryTargetAssets(target,values){
+  state.mysteryAnswersByTarget=state.mysteryAnswersByTarget&&typeof state.mysteryAnswersByTarget==='object'?state.mysteryAnswersByTarget:{};const next=uniqueMysteryAssets(values,target);
+  if(next.length)state.mysteryAnswersByTarget[target]=next;else delete state.mysteryAnswersByTarget[target];
+  const first=next[0]?resolveMysteryAsset(target,next[0]):null;
+  if(target==='map'){if(state.map?.mystery)state.map=first?{...first,mystery:true}:{name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:true}}
+  else if(activeQuestionSlots().includes(target))state.slots[target]=first?{...blankSlot(),...first}:blankSlot();
+  syncMysteryAnswers();
+}
+function toggleMysteryTargetAsset(target,value){const current=mysteryTargetAssets(target),index=current.findIndex(item=>mysteryAssetMatches(target,item,value));if(index>=0)current.splice(index,1);else{const asset=normalizeMysteryAsset(value,target);if(asset)current.push(asset)}setMysteryTargetAssets(target,current)}
 function isMysteryAnswer(value){const key=normalize(value);return Boolean(key&&activeMysteryAnswers().some(v=>normalize(v)===key))}
 function syncMysteryAnswers(){
-  const previous=uniqueAnswers(state.quiz?.mysteryAnswers),next=currentMysteryAnswers(),nextKeys=new Set(next.map(normalize));state.quiz.mysteryAnswers=next;
+  const previous=uniqueAnswers(state.quiz?.mysteryAnswers),next=activeMysteryAnswers(),nextKeys=new Set(next.map(normalize));state.quiz.mysteryAnswers=next;
   if(state.quiz.mode==='input'){
     const oldKeys=new Set(previous.filter(v=>!nextKeys.has(normalize(v))).map(normalize));state.quiz.inputAnswers=(Array.isArray(state.quiz.inputAnswers)?state.quiz.inputAnswers:[]).filter(v=>!oldKeys.has(normalize(v)));
     next.forEach(answer=>{if(!state.quiz.inputAnswers.some(v=>normalize(v)===normalize(answer)))state.quiz.inputAnswers.push(answer)});
@@ -512,40 +552,40 @@ function openShareMenu(){
   document.getElementById('shareX').onclick=()=>{if(requireMysteryAnswer())window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composeXText())}`,'_blank','noopener')};
 }
 
-function addQuestionMystery(slotKey){if(!PICK_SLOTS.includes(slotKey))return;if(!state.questionSlots.includes(slotKey))state.questionSlots.push(slotKey);syncMysteryAnswers()}
-function clearQuestionMystery(slotKey){if(!slotKey)return;state.questionSlots=activeQuestionSlots().filter(k=>k!==slotKey);syncMysteryAnswers()}
+function addQuestionMystery(slotKey){if(!PICK_SLOTS.includes(slotKey))return;if(!state.questionSlots.includes(slotKey))state.questionSlots.push(slotKey);if(!mysteryTargetAssets(slotKey).length&&state.slots?.[slotKey]?.name)state.mysteryAnswersByTarget[slotKey]=uniqueMysteryAssets([state.slots[slotKey]],slotKey);syncMysteryAnswers()}
+function clearQuestionMystery(slotKey){if(!slotKey)return;const first=mysteryTargetAssets(slotKey)[0],resolved=first?resolveMysteryAsset(slotKey,first):null;state.questionSlots=activeQuestionSlots().filter(k=>k!==slotKey);if(resolved)state.slots[slotKey]={...blankSlot(),...resolved};delete state.mysteryAnswersByTarget?.[slotKey];syncMysteryAnswers()}
 
 function openBrawler(slotKey){
-  const originSlotKey=slotKey,run=SLOT_RUNS.find(group=>group.includes(slotKey))||[slotKey],isPick=PICK_SLOTS.includes(slotKey),isGlobal=GLOBAL_SLOTS.includes(slotKey);let activeSlotKey=slotKey,mysteryTargetKey=slotKey;openModal(SLOT_NAMES[slotKey]);
+  const originSlotKey=slotKey,run=SLOT_RUNS.find(group=>group.includes(slotKey))||[slotKey],isPick=PICK_SLOTS.includes(slotKey),isGlobal=GLOBAL_SLOTS.includes(slotKey);let activeSlotKey=slotKey;openModal(SLOT_NAMES[slotKey]);
   modalBody.innerHTML=`<div class="searchbar"><input id="brawlerSearch" placeholder="브롤러 검색"></div><div id="brawlerGrid" class="grid"></div><div class="actions"><button class="action red" id="clearSlot">이 칸 비우기</button></div>`;
   const search=document.getElementById('brawlerSearch'),grid=document.getElementById('brawlerGrid');
   const matches=(slot,b)=>String(state.slots[slot]?.id||'')===String(b?.id||'');
   const moveToFirstEmpty=()=>{const first=run.find(k=>!state.slots[k]?.name);if(first)activeSlotKey=first};
-  const cancelSlot=target=>{if(!run.includes(target))return;mysteryTargetKey=target;if(activeQuestionSlots().includes(target))clearQuestionMystery(target);state.slots[target]=blankSlot();syncMysteryAnswers();moveToFirstEmpty()};
+  const cancelSlot=target=>{if(!run.includes(target))return;if(activeQuestionSlots().includes(target))clearQuestionMystery(target);delete state.mysteryAnswersByTarget?.[target];state.slots[target]=blankSlot();syncMysteryAnswers();moveToFirstEmpty()};
   const advance=()=>{const start=run.indexOf(activeSlotKey);for(let i=1;i<run.length;i++){const next=run[(start+i)%run.length];if(!state.slots[next]?.name){activeSlotKey=next;break}}};
   const draw=()=>{
     modalTitle.textContent=SLOT_NAMES[activeSlotKey];
     const q=normalize(search.value);
     const list=brawlers.filter(b=>{const ko=brawlerKoName(b);return !q||normalize(b.name).includes(q)||normalize(ko).includes(q)});
-    const historySlots=isPick?PICK_SLOTS:isGlobal?GLOBAL_SLOTS:BAN_SLOTS.includes(originSlotKey)?BAN_SLOTS:[],blockedSlots=isGlobal?[]:isPick?[...GLOBAL_SLOTS,...BAN_SLOTS]:BAN_SLOTS.includes(originSlotKey)?GLOBAL_SLOTS:[],historyIndex=b=>{const index=historySlots.findIndex(k=>matches(k,b));return index<0?Number.MAX_SAFE_INTEGER:index},blocked=b=>brawlerUsedSlots(b,blockedSlots).length>0;
-    list.sort((a,b)=>{const ah=historyIndex(a),bh=historyIndex(b);if(ah!==bh&&(ah<Number.MAX_SAFE_INTEGER||bh<Number.MAX_SAFE_INTEGER))return ah-bh;const ab=Number(blocked(a)),bb=Number(blocked(b));return ab-bb||brawlerKoName(a).localeCompare(brawlerKoName(b),'ko')});
-    const selectedMystery=activeQuestionSlots().includes(mysteryTargetKey);grid.innerHTML='';
+    const selectedMystery=activeQuestionSlots().includes(originSlotKey),answerAssets=mysteryTargetAssets(originSlotKey),historySlots=isPick?PICK_SLOTS:isGlobal?GLOBAL_SLOTS:BAN_SLOTS.includes(originSlotKey)?BAN_SLOTS:[],blockedSlots=isGlobal?[]:isPick?[...GLOBAL_SLOTS,...BAN_SLOTS]:BAN_SLOTS.includes(originSlotKey)?GLOBAL_SLOTS:[],historyIndex=b=>{const index=historySlots.findIndex(k=>matches(k,b));return index<0?Number.MAX_SAFE_INTEGER:index},answerIndex=b=>answerAssets.findIndex(v=>mysteryAssetMatches(originSlotKey,v,{name:brawlerKoName(b),id:String(b.id||'')})),blocked=b=>{const slots=selectedMystery?[...GLOBAL_SLOTS,...BAN_SLOTS,...PICK_SLOTS.filter(k=>k!==originSlotKey)]:blockedSlots;return brawlerUsedSlots(b,slots).length>0};
+    list.sort((a,b)=>{if(selectedMystery){const ai=answerIndex(a),bi=answerIndex(b);if(ai!==bi&&(ai>=0||bi>=0))return ai<0?1:bi<0?-1:ai-bi}const ah=historyIndex(a),bh=historyIndex(b);if(!selectedMystery&&ah!==bh&&(ah<Number.MAX_SAFE_INTEGER||bh<Number.MAX_SAFE_INTEGER))return ah-bh;const ab=Number(blocked(a)),bb=Number(blocked(b));return ab-bb||brawlerKoName(a).localeCompare(brawlerKoName(b),'ko')});
+    grid.innerHTML='';
     if(isPick){
       const mysteryBtn=makeMysteryCard('미스테리 픽');
       mysteryBtn.classList.toggle('mystery-pending',selectedMystery);mysteryBtn.setAttribute('aria-pressed',String(selectedMystery));
-      mysteryBtn.title=SLOT_NAMES[mysteryTargetKey];mysteryBtn.insertAdjacentHTML('beforeend',`<div class="sub-label">${esc(SLOT_NAMES[mysteryTargetKey])}</div>`);
-      mysteryBtn.onclick=()=>{if(selectedMystery)clearQuestionMystery(mysteryTargetKey);else addQuestionMystery(mysteryTargetKey);render();draw()};
+      if(selectedMystery)mysteryBtn.insertAdjacentHTML('beforeend',`<div class="sub-label">정답 ${answerAssets.length}개</div>`);
+      mysteryBtn.onclick=()=>{if(selectedMystery)clearQuestionMystery(originSlotKey);else addQuestionMystery(originSlotKey);render();draw()};
       grid.appendChild(mysteryBtn);
     }
     if(!brawlers.length){grid.insertAdjacentHTML('beforeend','<div class="loading">브롤러 목록을 불러오는 중…</div>');return}
     if(!list.length){grid.insertAdjacentHTML('beforeend','<div class="empty-result">검색 결과가 없습니다.</div>');return}
     list.forEach(b=>{
       const btn=document.createElement('button'),id=String(b.id||''),img=brawlerImage(b),thumb=brawlerThumb(b),ko=brawlerKoName(b);
-      const selected=matches(activeSlotKey,b),answerSelected=selectedMystery&&matches(mysteryTargetKey,b),usedSlots=historySlots.filter(k=>matches(k,b)),blockedUsed=brawlerUsedSlots(b,blockedSlots);
+      const answerAsset={name:ko,id,image:img},selected=matches(activeSlotKey,b),answerSelected=selectedMystery&&isMysteryTargetAnswer(originSlotKey,answerAsset),usedSlots=historySlots.filter(k=>matches(k,b)),effectiveBlockedSlots=selectedMystery?[...GLOBAL_SLOTS,...BAN_SLOTS,...PICK_SLOTS.filter(k=>k!==originSlotKey)]:blockedSlots,blockedUsed=brawlerUsedSlots(b,effectiveBlockedSlots);
       const removableSlot=selected?activeSlotKey:usedSlots.slice().sort((a,b)=>run.indexOf(b)-run.indexOf(a))[0];
-      const isBlocked=blockedUsed.length>0&&!removableSlot,blockedLabel=usageLabel(blockedUsed);btn.className='card';btn.classList.toggle('selected',selected&&!answerSelected);btn.classList.toggle('mystery-answer-card',answerSelected);btn.classList.toggle('history-card',usedSlots.length>0);btn.classList.toggle('excluded-card',isBlocked);btn.disabled=isBlocked;btn.setAttribute('aria-pressed',String(usedSlots.length>0));if(removableSlot)btn.title=`${SLOT_NAMES[removableSlot]} 선택 취소`;if(isBlocked)btn.dataset.excluded=blockedLabel;
-      const sub=usedSlots.length?usedSlots.map(k=>SLOT_NAMES[k]).join(' · '):isBlocked?blockedLabel:(b.name||'');btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(thumb)}" alt=""><div class="label">${esc(ko)}</div><div class="sub-label">${esc(sub)}</div>`;
-      btn.onclick=()=>{if(isBlocked)return;if(removableSlot)cancelSlot(removableSlot);else{const placedSlot=activeSlotKey;state.slots[placedSlot]={name:ko,id,image:img};mysteryTargetKey=placedSlot;syncMysteryAnswers();advance()}render();draw()};
+      const isBlocked=blockedUsed.length>0&&!answerSelected&&!(removableSlot&&!selectedMystery),blockedLabel=usageLabel(blockedUsed),showHistory=usedSlots.length>0&&!answerSelected&&!selectedMystery;btn.className='card';btn.classList.toggle('selected',selected&&!selectedMystery);btn.classList.toggle('mystery-answer-card',answerSelected);btn.classList.toggle('history-card',showHistory);btn.classList.toggle('excluded-card',isBlocked);btn.disabled=isBlocked;btn.setAttribute('aria-pressed',String(answerSelected||usedSlots.length>0));if(removableSlot&&!selectedMystery)btn.title=`${SLOT_NAMES[removableSlot]} 선택 취소`;if(isBlocked)btn.dataset.excluded=blockedLabel;
+      const sub=answerSelected?'미스테리 정답':usedSlots.length?usedSlots.map(k=>SLOT_NAMES[k]).join(' · '):isBlocked?blockedLabel:(b.name||'');btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(thumb)}" alt=""><div class="label">${esc(ko)}</div><div class="sub-label">${esc(sub)}</div>`;
+      btn.onclick=()=>{if(isBlocked)return;if(selectedMystery)toggleMysteryTargetAsset(originSlotKey,answerAsset);else if(removableSlot)cancelSlot(removableSlot);else{delete state.mysteryAnswersByTarget?.[activeSlotKey];state.slots[activeSlotKey]=answerAsset;syncMysteryAnswers();advance()}render();draw()};
       grid.appendChild(btn);
     });
   };
@@ -554,8 +594,9 @@ function openBrawler(slotKey){
 }
 
 function modeTabs(){return `<button class="tab ${activeMapMode==='ALL'?'active':''}" data-mode="ALL">전체</button>`+MODE_PRESETS.map(m=>`<button class="tab ${activeMapMode===m.name?'active':''}" data-mode="${escAttr(m.name)}">${m.ko}</button>`).join('')}
-function clearMapMystery(){if(!state.map?.mystery)return;state.map.mystery=false;syncMysteryAnswers()}
-function clearMapSelection(){state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false};syncMysteryAnswers()}
+function addMapMystery(){if(state.map?.mystery)return;if(state.map?.name)state.mysteryAnswersByTarget.map=uniqueMysteryAssets([state.map],'map');state.map.mystery=true;syncMysteryAnswers()}
+function clearMapMystery(){if(!state.map?.mystery)return;const first=mysteryTargetAssets('map')[0],resolved=first?resolveMysteryAsset('map',first):null;state.map=resolved?{...resolved,mystery:false}:{name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false};delete state.mysteryAnswersByTarget?.map;syncMysteryAnswers()}
+function clearMapSelection(){state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false};delete state.mysteryAnswersByTarget?.map;syncMysteryAnswers()}
 function openMap(){
   openModal('맵 선택');
   modalBody.innerHTML=`<div class="tabs" id="poolTabs"><button class="tab ${activeMapPool==='ranked'?'active':''}" data-pool="ranked">경쟁전</button><button class="tab ${activeMapPool==='bsc'?'active':''}" data-pool="bsc">BSC</button><button class="tab ${activeMapPool==='all'?'active':''}" data-pool="all">전체 맵</button></div><div class="tabs" id="modeTabs">${modeTabs()}</div><div class="searchbar"><input id="mapSearch" placeholder="맵 검색"></div><div id="mapGrid" class="grid"></div><div class="actions"><button class="action red" id="clearMap">맵/모드 비우기</button></div>`;
@@ -564,12 +605,13 @@ function openMap(){
     const q=normalize(search.value);const allowed=activeMapPool==='all'?null:poolNames(activeMapPool);
     let list=maps.filter(m=>{const name=normalize(m.name),ko=normalize(mapKoName(m));const mode=mapModeName(m);return(!allowed||allowed.has(name))&&(activeMapMode==='ALL'||normalize(mode)===normalize(activeMapMode))&&(!q||name.includes(q)||ko.includes(q))});
     grid.innerHTML='';
-    const mysterySelected=Boolean(state.map?.mystery),mysteryBtn=makeMysteryCard('미스테리 맵',true);
+    const mysterySelected=Boolean(state.map?.mystery),answerAssets=mysteryTargetAssets('map'),mysteryBtn=makeMysteryCard('미스테리 맵',true);
     mysteryBtn.classList.toggle('mystery-pending',mysterySelected);mysteryBtn.setAttribute('aria-pressed',String(mysterySelected));
-    mysteryBtn.onclick=()=>{if(mysterySelected)clearMapMystery();else{state.map.mystery=true;syncMysteryAnswers()}render();draw()};grid.appendChild(mysteryBtn);
+    if(mysterySelected)mysteryBtn.insertAdjacentHTML('beforeend',`<div class="sub-label">정답 ${answerAssets.length}개</div>`);
+    mysteryBtn.onclick=()=>{if(mysterySelected)clearMapMystery();else addMapMystery();render();draw()};grid.appendChild(mysteryBtn);
     if(!maps.length){grid.insertAdjacentHTML('beforeend','<div class="loading">맵 데이터를 불러오는 중…</div>');return}
     if(!list.length){grid.insertAdjacentHTML('beforeend','<div class="empty-result">현재 필터에 맞는 맵이 없습니다.<br>전체 맵 탭에서 검색해 보세요.</div>');return}
-    list.sort((a,b)=>mapKoName(a).localeCompare(mapKoName(b),'ko')).forEach(m=>{const mode=mapModeName(m);const preset=modePresetByName(mode);const img=mapImage(m);const ko=mapKoName(m);const btn=document.createElement('button');const selected=Boolean(img)&&state.map?.image===img;btn.className='card map-card';btn.classList.toggle('selected',selected&&!mysterySelected);btn.classList.toggle('mystery-answer-card',selected&&mysterySelected);btn.setAttribute('aria-pressed',String(selected));btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(img)}" alt=""><div class="label"><span class="mode-dot" style="background:${preset?.color||'#888'}"></span>${esc(ko)}</div><div class="sub-label">${esc(m.name||'')}</div>`;btn.onclick=()=>selectMap(m,draw);grid.appendChild(btn)})
+    list.sort((a,b)=>{if(mysterySelected){const ai=answerAssets.findIndex(v=>mysteryAssetMatches('map',v,{name:mapKoName(a)})),bi=answerAssets.findIndex(v=>mysteryAssetMatches('map',v,{name:mapKoName(b)}));if(ai!==bi&&(ai>=0||bi>=0))return ai<0?1:bi<0?-1:ai-bi}return mapKoName(a).localeCompare(mapKoName(b),'ko')}).forEach(m=>{const mode=mapModeName(m);const preset=modePresetByName(mode);const img=mapImage(m);const ko=mapKoName(m);const btn=document.createElement('button'),answerAsset={name:ko,image:img,modeName:preset?.ko||mode||'',modeIcon:m?.gameMode?.imageUrl||preset?.icon||'',modeColor:m?.gameMode?.color||preset?.color||'#7138dc'},selected=Boolean(img)&&state.map?.image===img,answerSelected=mysterySelected&&isMysteryTargetAnswer('map',answerAsset);btn.className='card map-card';btn.classList.toggle('selected',selected&&!mysterySelected);btn.classList.toggle('mystery-answer-card',answerSelected);btn.setAttribute('aria-pressed',String(answerSelected||selected));btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(img)}" alt=""><div class="label"><span class="mode-dot" style="background:${preset?.color||'#888'}"></span>${esc(ko)}</div><div class="sub-label">${esc(answerSelected?'미스테리 정답':m.name||'')}</div>`;btn.onclick=()=>selectMap(m,draw);grid.appendChild(btn)})
   };
   const poolTabsEl=document.getElementById('poolTabs');
   poolTabsEl.onclick=e=>{const b=e.target.closest('[data-pool]');if(!b)return;activeMapPool=b.dataset.pool;poolTabsEl.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));draw()};
@@ -577,7 +619,7 @@ function openMap(){
   function bindModeTabClick(fn){document.getElementById('modeTabs').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;activeMapMode=b.dataset.mode;document.getElementById('modeTabs').innerHTML=modeTabsHtml();bindModeTabClick(fn);fn()}}
   bindModeTabClick(draw);search.oninput=draw;draw();document.getElementById('clearMap').onclick=()=>{clearMapSelection();render();closeModal()};
 }
-function selectMap(m,after){const mode=mapModeName(m),p=modePresetByName(mode),image=mapImage(m),name=mapKoName(m),selected=Boolean(image)&&state.map?.image===image,mystery=Boolean(state.map?.mystery);if(selected){if(mystery)state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:true};else clearMapSelection()}else state.map={name,image,modeName:p?.ko||mode||'',modeIcon:m?.gameMode?.imageUrl||p?.icon||'',modeColor:m?.gameMode?.color||p?.color||'#7138dc',mystery};syncMysteryAnswers();render();if(after)after()}
+function selectMap(m,after){const mode=mapModeName(m),p=modePresetByName(mode),image=mapImage(m),name=mapKoName(m),asset={name,image,modeName:p?.ko||mode||'',modeIcon:m?.gameMode?.imageUrl||p?.icon||'',modeColor:m?.gameMode?.color||p?.color||'#7138dc'},selected=Boolean(image)&&state.map?.image===image,mystery=Boolean(state.map?.mystery);if(mystery)toggleMysteryTargetAsset('map',asset);else if(selected)clearMapSelection();else{delete state.mysteryAnswersByTarget?.map;state.map={...asset,mystery:false};syncMysteryAnswers()}render();if(after)after()}
 
 function openMode(){
   openModal('모드 선택','모드에 따라 맵 이름 색상도 자동으로 바뀝니다.');
@@ -695,7 +737,7 @@ async function downloadPNG(){
   catch(e){console.error(e);alert('PNG 생성에 실패했습니다. 외부 팀 로고가 CORS를 허용하지 않는 경우 직접 업로드한 로고를 사용해 주세요.')}
   finally{exportHost?.remove()}
 }
-function swapSides(){[state.teams.left,state.teams.right]=[state.teams.right,state.teams.left];[['lg1','rg1'],['lg2','rg2'],['lb1','rb1'],['lb2','rb2'],['lb3','rb3'],['lp1','rp1'],['lp2','rp2'],['lp3','rp3']].forEach(([a,b])=>[state.slots[a],state.slots[b]]=[state.slots[b],state.slots[a]]);const q={lp1:'rp1',lp2:'rp2',lp3:'rp3',rp1:'lp1',rp2:'lp2',rp3:'lp3'};state.questionSlots=activeQuestionSlots().map(k=>q[k]||k);syncMysteryAnswers();render()}
+function swapSides(){[state.teams.left,state.teams.right]=[state.teams.right,state.teams.left];[['lg1','rg1'],['lg2','rg2'],['lb1','rb1'],['lb2','rb2'],['lb3','rb3'],['lp1','rp1'],['lp2','rp2'],['lp3','rp3']].forEach(([a,b])=>[state.slots[a],state.slots[b]]=[state.slots[b],state.slots[a]]);const q={lp1:'rp1',lp2:'rp2',lp3:'rp3',rp1:'lp1',rp2:'lp2',rp3:'lp3'},groups={};Object.entries(state.mysteryAnswersByTarget||{}).forEach(([target,answers])=>{groups[q[target]||target]=answers});state.mysteryAnswersByTarget=groups;state.questionSlots=activeQuestionSlots().map(k=>q[k]||k);syncMysteryAnswers();render()}
 function resizePreview(){if(document.body.classList.contains('preview-mode')){const availableW=Math.max(300,innerWidth-32),s=Math.min(1,availableW/1920);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px';return}const maxW=Math.max(300,workspace.clientWidth-44);const s=Math.min(1,maxW/1920);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px'}
 
 canvas.addEventListener('click',e=>{if(document.body.classList.contains('preview-mode'))return;const slot=e.target.closest('[data-slot]');if(slot)return openBrawler(slot.dataset.slot);const team=e.target.closest('[data-team]');if(team)return openTeam(team.dataset.team);const edit=e.target.closest('[data-edit]');if(edit?.dataset.edit==='map')return openMap();if(edit?.dataset.edit==='mode')return openMode()});
