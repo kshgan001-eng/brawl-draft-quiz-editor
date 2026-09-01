@@ -65,8 +65,8 @@ body{overflow-x:hidden}
 .form{display:grid;gap:12px}.field label{display:block;color:#b4bac4;font-size:11px;font-weight:900;margin:0 0 6px}.field .hint{font-size:10px;color:#7f8793;margin-top:5px;line-height:1.45}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.upload{border:1px dashed #4b5360;background:#191d23;border-radius:12px;padding:14px;text-align:center}.upload input{display:none}.upload label{cursor:pointer;font-weight:900;color:#dfe3e8}.note{font-size:11px;line-height:1.55;color:#8f97a3;background:#111419;border:1px solid #2b3038;border-radius:10px;padding:10px 12px;margin-bottom:12px}
 .share-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.share-action{border:1px solid #363d47;background:#20242a;color:#fff;border-radius:14px;min-height:118px;padding:16px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-weight:900}.share-action:hover{background:#2a3038;border-color:#666f7c}.share-action svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.share-action.x-icon svg{fill:currentColor;stroke:none;width:26px;height:26px}
 .settings-stack{display:grid;gap:10px}.setting-card{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:68px;padding:14px 16px;background:#1d2127;border:1px solid #363c46;border-radius:14px}.setting-name{font-size:14px;font-weight:950}.setting-switch{position:relative;width:48px;height:28px;border:0;border-radius:999px;background:#454b55;padding:0;transition:.18s}.setting-switch:before{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.18s}.setting-switch.on{background:#4d75ff}.setting-switch.on:before{transform:translateX(20px)}
-.quiz-panel{display:none;width:min(920px,calc(100vw - 32px));background:linear-gradient(145deg,#1d222a,#12151a 72%);border:1px solid #3a424e;border-radius:22px;padding:20px;color:#f5f6f7;box-shadow:0 20px 58px #0008,inset 0 1px 0 #ffffff0a;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}.quiz-panel.show{display:block}.quiz-panel h2{font-size:21px;margin:0;font-weight:950;letter-spacing:-.025em}
-.quiz-editor-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}.quiz-mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#0b0e12;border:1px solid #343b46;border-radius:13px;padding:4px}.quiz-mode-btn{min-width:88px;border:0;background:transparent;color:#929aa5;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:900;transition:.15s}.quiz-mode-btn.active{background:#f5f6f7;color:#111;box-shadow:0 3px 10px #0005}
+.quiz-panel{display:none;width:min(960px,calc(100vw - 32px));background:linear-gradient(150deg,#1a1f26 0,#111419 78%);border:1px solid #353d48;border-radius:20px;padding:22px;color:#f5f6f7;box-shadow:0 18px 54px #0007,inset 0 1px 0 #ffffff0b;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}.quiz-panel.show{display:block}.quiz-panel h2{font-size:22px;margin:0;font-weight:950;letter-spacing:-.035em}
+.quiz-editor-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #2e3540}.quiz-mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:#0b0e12;border:1px solid #343b46;border-radius:12px;padding:3px}.quiz-mode-btn{min-width:92px;border:0;background:transparent;color:#929aa5;border-radius:8px;padding:9px 13px;font-size:12px;font-weight:900;transition:.15s}.quiz-mode-btn.active{background:#f5f6f7;color:#111;box-shadow:0 3px 10px #0005}
 .quiz-edit-list{display:grid;gap:10px}.quiz-edit-row{display:grid;grid-template-columns:56px minmax(0,1fr) 58px 42px;gap:9px;align-items:center}.quiz-answer-row{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px}.quiz-option-visual{position:relative;width:56px;height:56px;overflow:hidden;border:1px solid #454d59;border-radius:13px;background:#272d35;box-shadow:inset 0 1px 0 #ffffff0b}.quiz-option-visual.empty:after{content:attr(data-option-number);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#747d8a;font:950 12px/1 Arial;letter-spacing:.08em}.quiz-option-thumb{position:relative;z-index:1;width:100%;height:100%;display:block;object-fit:cover;object-position:center;background:#252a31}.quiz-option-field{height:50px;display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;overflow:hidden;border:1px solid #3b424d;background:#0d1014;border-radius:12px;transition:border-color .15s,box-shadow .15s}.quiz-option-field:focus-within{border-color:#aeb8c7;box-shadow:0 0 0 3px #aeb8c719}.quiz-option-input,.quiz-answer-editor{width:100%;height:44px;border:1px solid #3b424d;background:#0d1014;color:#fff;border-radius:11px;padding:0 12px;outline:none}.quiz-option-field .quiz-option-input{height:48px;border:0;background:transparent;border-radius:0;padding:0 14px;font-size:14px;font-weight:850}.quiz-option-input:focus,.quiz-answer-editor:focus{border-color:#aeb8c7}.quiz-mark-correct,.quiz-remove,.quiz-add,.quiz-search{border:1px solid #414956;background:#252b33;color:#b7bec8;border-radius:11px;height:44px;display:inline-flex;align-items:center;justify-content:center;transition:.15s}.quiz-option-field .quiz-search{height:50px;border:0;border-left:1px solid #343b45;border-radius:0;background:#171b21}.quiz-mark-correct:hover,.quiz-remove:hover,.quiz-search:hover,.quiz-add:hover{border-color:#7e8795;background:#303741}.quiz-mark-correct{height:50px;font-size:10px;font-weight:950}.quiz-mark-correct.active{background:#1f7048;border-color:#4fbc80;color:#fff}.quiz-remove{height:50px;color:#ffaaa3;font-size:18px}.quiz-search{color:#e2e6ec}.quiz-search svg,.quiz-add svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.quiz-add{width:100%;margin-top:11px;border-style:dashed;color:#fff}
 .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.quiz-choice{border:1px solid #414955;background:#20252c;color:#fff;border-radius:15px;padding:9px 11px;text-align:left;font-weight:850;transition:border-color .15s,background .15s,transform .15s}.quiz-choice:hover,.quiz-choice.selected{border-color:#fff;background:#303641}.quiz-choice:not(:disabled):active{transform:scale(.992)}.quiz-choice-main{display:flex;align-items:center;gap:13px;min-width:0}.quiz-choice-portrait{width:58px;height:58px;flex:0 0 58px;display:block;object-fit:cover;object-position:center;border-radius:12px;background:#292f37;border:1px solid #454e5a}.quiz-choice-copy{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}.quiz-choice-index{color:#8e98a6;font:950 9px/1 Arial;letter-spacing:.13em}.quiz-choice-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;letter-spacing:-.02em}.quiz-input-row{display:flex;gap:8px;margin-top:14px}.quiz-input-row input{flex:1;min-width:0;border:1px solid #3b424d;background:#0e1013;color:#fff;border-radius:11px;padding:12px}.quiz-submit{border:0;background:#fff;color:#111;border-radius:11px;padding:12px 18px;font-weight:950}.quiz-result{display:none;margin-top:14px;border-radius:14px;padding:15px 16px;line-height:1.6;font-weight:850}.quiz-result.show{display:block}.quiz-result.correct{background:#143c2a;color:#b8f6cf;border:1px solid #286943}.quiz-result.wrong{background:#421d1b;color:#ffc4be;border:1px solid #7b3832}.quiz-result.neutral{background:#252b33;color:#d7dce2;border:1px solid #424b58}.quiz-result-message{margin-top:6px;font-size:12px;font-weight:700;opacity:.9}
 .mystery-pending{border-color:#f2c84b!important;box-shadow:inset 0 0 0 3px #f2c84b!important}.mystery-answer-card{border-color:#45aa74!important;box-shadow:inset 0 0 0 3px #45aa74!important}
@@ -74,9 +74,11 @@ body{overflow-x:hidden}
 .quiz-choice{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:50px}.quiz-choice:not(:disabled):hover{border-color:#fff;background:#303641}.quiz-choice:disabled{cursor:default}.quiz-choice.locked{opacity:.48}.quiz-choice.answer-correct{border-color:#45aa74;background:#143c2a;color:#c2f7d4;box-shadow:inset 0 0 0 2px #45aa74}.quiz-choice.answer-wrong{border-color:#dc5a52;background:#421d1b;color:#ffd1cc;box-shadow:inset 0 0 0 2px #dc5a52}.quiz-choice-mark{display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;border-radius:50%;font:950 16px/1 Arial}.answer-correct .quiz-choice-mark{background:#45aa74;color:#fff}.answer-wrong .quiz-choice-mark{background:#dc5a52;color:#fff}
 .quiz-input-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto}.quiz-input-row input{width:100%}.quiz-input-row.correct input{border-color:#45aa74;background:#143c2a;color:#c2f7d4}.quiz-input-row.wrong input{border-color:#dc5a52;background:#421d1b;color:#ffd1cc}.quiz-input-mark{display:inline-flex;align-items:center;justify-content:center;width:46px;border-radius:11px;font:950 20px/1 Arial;color:#fff}.quiz-input-row.correct .quiz-input-mark{background:#45aa74}.quiz-input-row.wrong .quiz-input-mark{background:#dc5a52}.quiz-submit:disabled{opacity:.55;cursor:default}.quiz-result-title{display:flex;align-items:center;gap:9px}.quiz-result-symbol{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#ffffff22;font:950 16px/1 Arial}.quiz-editor-link{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;padding:9px 12px;border-radius:9px;background:#fff;color:#111;text-decoration:none;font-size:12px;font-weight:950}
 .quiz-autocomplete{position:relative;min-width:0}.quiz-autocomplete>input{width:100%}.quiz-suggestions{display:none;position:absolute;z-index:40;top:calc(100% + 6px);left:0;right:0;max-height:260px;overflow:auto;padding:6px;background:#111419;border:1px solid #3b424d;border-radius:12px;box-shadow:0 14px 36px #000b}.quiz-suggestions.show{display:grid;gap:4px}.quiz-suggestion{width:100%;min-height:46px;border:0;border-radius:8px;background:transparent;color:#fff;padding:5px 8px;display:flex;align-items:center;gap:10px;text-align:left;font-weight:850}.quiz-suggestion:hover,.quiz-suggestion:focus{background:#2b313a;outline:none}.quiz-suggestion img{width:36px;height:36px;flex:0 0 36px;display:block;object-fit:cover;object-position:center;border-radius:7px;background:#252a31}
+.quiz-input-edit-list{display:grid;gap:10px}.quiz-input-edit-row{display:grid;grid-template-columns:44px minmax(0,1fr) 42px;gap:9px;align-items:center}.quiz-answer-index{width:44px;height:50px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #414956;border-radius:12px;background:#242a32;color:#8f99a7;font:950 10px/1 Arial;letter-spacing:.12em}.quiz-input-edit-row .quiz-option-field{overflow:visible}.quiz-input-edit-row .quiz-autocomplete{height:48px}.quiz-input-edit-row.linked .quiz-answer-index{background:#f5f6f7;border-color:#f5f6f7;color:#111;font-size:20px;letter-spacing:0}.quiz-input-edit-row.linked .quiz-option-field,.quiz-edit-row.linked .quiz-option-field{border-color:#45aa74;box-shadow:0 0 0 3px #45aa7418}.quiz-input-edit-row.linked .quiz-option-input,.quiz-edit-row.linked .quiz-option-input{color:#bff4d2}.quiz-search:disabled,.quiz-remove:disabled{opacity:.42;cursor:default}.quiz-add{min-height:48px;border-color:#454d59;background:#1a1f25}.quiz-add:hover{background:#252b33;border-color:#707987}.quiz-choice{overflow:hidden}.quiz-choice-copy{justify-content:center}.quiz-result{box-shadow:inset 0 1px 0 #ffffff0b}.quiz-editor-link{transition:transform .15s,background .15s}.quiz-editor-link:hover{transform:translateY(-1px);background:#e6e9ed}
 .team-left-name,.team-right-name{font-family:Impact,"Arial Black","Noto Sans KR",Pretendard,sans-serif;font-size:58px;font-weight:900;-webkit-text-stroke:0 transparent;paint-order:normal;letter-spacing:-.018em;line-height:1;text-shadow:none;font-synthesis:weight}.team-logo-cell{background:#fff}.team-logo-cell.empty:after{color:#bbb}.question-mark{background:#fff}.card.mystery-card img,.card.map-card.mystery-card img{background:#fff}
 .preview-mode .topbar{display:none}.preview-mode .workspace{padding:24px 16px 34px;min-height:100vh;background:radial-gradient(circle at 50% -20%,#343a45 0,#20242a 36%,#17191e 76%);align-items:center;gap:20px}.preview-mode .quiz-panel.show{display:contents}.preview-mode .quiz-panel h2{order:-2;width:min(1100px,calc(100vw - 32px));margin:0 0 3px;text-align:center;font:1000 clamp(27px,4vw,46px)/1.15 "Arial Black",Pretendard,"Noto Sans KR",sans-serif;letter-spacing:-.04em;color:#fff;text-shadow:0 3px 16px #0008}.preview-mode .stage{order:0}.preview-mode .quiz-options,.preview-mode .quiz-input-row{order:1;width:min(1000px,calc(100vw - 32px));margin:6px 0 0}.preview-mode .quiz-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.preview-mode .quiz-choice{min-height:84px;border:2px solid #4a5360;background:#14181e;border-radius:17px;padding:10px 12px;font-size:15px;box-shadow:0 7px 20px #0003}.preview-mode .quiz-choice-portrait{width:62px;height:62px;flex-basis:62px;border-radius:13px}.preview-mode .quiz-choice-label{font-size:17px}.preview-mode .quiz-choice:not(:disabled):hover{border-color:#fff;background:#252b33;transform:translateY(-1px)}.preview-mode .quiz-result{order:2;width:min(1000px,calc(100vw - 32px));margin:0;background:transparent!important;border:0!important;padding:3px 0 0;text-align:center;font-size:16px}.preview-mode .quiz-result-title{justify-content:center;font-size:18px}.preview-mode .quiz-result-message{font-size:13px}.preview-mode .quiz-editor-link{margin-top:14px;padding:11px 16px;border-radius:999px}.preview-mode .canvas-wrap{box-shadow:0 14px 48px #0009}.preview-mode .editable{cursor:default}.preview-mode .editable:hover{filter:none;box-shadow:none}
-@media(max-width:800px){.topbar{height:auto;min-height:62px;padding:10px;overflow-x:auto}.brand{display:none}.workspace{padding:10px}.tb{padding:8px 10px;font-size:12px}.row2{grid-template-columns:1fr}.modal-backdrop{padding:8px}.modal{max-height:94vh}.grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}.share-grid{grid-template-columns:1fr}.share-action{min-height:82px}.quiz-options{grid-template-columns:1fr}.quiz-panel{padding:15px}.quiz-editor-head{align-items:stretch;flex-direction:column}.quiz-mode-switch{width:100%}.quiz-edit-row{grid-template-columns:48px minmax(0,1fr) 48px 36px;gap:6px}.quiz-option-visual{width:48px;height:48px;border-radius:11px}.quiz-option-field{height:46px;grid-template-columns:minmax(0,1fr) 40px}.quiz-option-field .quiz-option-input{height:44px;padding:0 10px}.quiz-option-field .quiz-search{height:46px}.quiz-search,.quiz-mark-correct,.quiz-remove{height:46px}.preview-mode .quiz-options{grid-template-columns:1fr}.preview-mode .quiz-choice{min-height:74px}.preview-mode .quiz-choice-portrait{width:52px;height:52px;flex-basis:52px}.preview-mode .quiz-choice-label{font-size:16px}}
+.preview-mode .quiz-input-row{grid-template-columns:minmax(0,1fr) auto auto;gap:8px;padding:8px;background:#11151b;border:1px solid #414a57;border-radius:17px;box-shadow:0 8px 24px #0004}.preview-mode .quiz-input-row .quiz-autocomplete{min-height:54px}.preview-mode .quiz-input-row input{height:54px;border:1px solid #3f4854;border-radius:11px;background:#1d232b;padding:0 16px;font-size:16px;font-weight:800}.preview-mode .quiz-submit{min-height:54px;padding:0 22px;border-radius:11px}.preview-mode .quiz-input-mark{width:54px;border-radius:11px}.preview-mode .quiz-result-symbol{width:31px;height:31px}.preview-mode .quiz-result-message{margin-top:8px;color:#b9c0ca}
+@media(max-width:800px){.topbar{height:auto;min-height:62px;padding:10px;overflow-x:auto}.brand{display:none}.workspace{padding:10px}.tb{padding:8px 10px;font-size:12px}.row2{grid-template-columns:1fr}.modal-backdrop{padding:8px}.modal{max-height:94vh}.grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}.share-grid{grid-template-columns:1fr}.share-action{min-height:82px}.quiz-options{grid-template-columns:1fr}.quiz-panel{padding:15px}.quiz-editor-head{align-items:stretch;flex-direction:column}.quiz-mode-switch{width:100%}.quiz-edit-row{grid-template-columns:48px minmax(0,1fr) 48px 36px;gap:6px}.quiz-option-visual{width:48px;height:48px;border-radius:11px}.quiz-input-edit-row{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}.quiz-answer-index{width:36px;height:46px;border-radius:10px}.quiz-option-field{height:46px;grid-template-columns:minmax(0,1fr) 40px}.quiz-option-field .quiz-option-input{height:44px;padding:0 10px}.quiz-option-field .quiz-search{height:46px}.quiz-input-edit-row .quiz-autocomplete{height:44px}.quiz-search,.quiz-mark-correct,.quiz-remove{height:46px}.preview-mode .quiz-options{grid-template-columns:1fr}.preview-mode .quiz-choice{min-height:74px}.preview-mode .quiz-choice-portrait{width:52px;height:52px;flex-basis:52px}.preview-mode .quiz-choice-label{font-size:16px}.preview-mode .quiz-input-row{grid-template-columns:minmax(0,1fr) auto;padding:6px}.preview-mode .quiz-input-mark{grid-column:1/-1;width:100%;height:38px}.preview-mode .quiz-submit{padding:0 15px}}
 </style>
 </head>
 <body>
@@ -207,11 +209,11 @@ const QUIZ_WRONG_MESSAGES=[
   '예상과 달랐어요. 숨겨진 항목을 확인해 보세요.',
   '아쉽게도 선택한 답은 정답이 아니에요.'
 ];
-const blankQuiz=()=>({enabled:false,mode:'choices',options:[],inputAnswer:'',mysteryAnswer:''});
+const blankQuiz=()=>({enabled:false,mode:'choices',options:[],inputAnswers:[],mysteryAnswers:[]});
 const blankState=()=>({
   teams:{left:{name:'',abbr:'',logo:''},right:{name:'',abbr:'',logo:''}},
   map:{name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false},
-  questionSlot:'',slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,blankSlot()])),
+  questionSlots:[],slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,blankSlot()])),
   colors:{blue:'#315fdf',red:'#e95342',paper:'#f4f4f0'},
   quiz:blankQuiz()
 });
@@ -243,14 +245,18 @@ function hydrateState(raw){
   const oldQuiz=x.quiz&&typeof x.quiz==='object'?x.quiz:{},oldCorrect=String(oldQuiz.correctAnswer||'').trim();
   const options=Array.isArray(oldQuiz.options)?oldQuiz.options.map(v=>typeof v==='object'&&v?{text:String(v.text??v.value??'').trim(),correct:Boolean(v.correct)}:{text:String(v||'').trim(),correct:Boolean(oldCorrect&&normalize(v)===normalize(oldCorrect))}).filter(v=>v.text):[];
   const mode=oldQuiz.mode==='input'||oldQuiz.allowInput===true?'input':'choices';
-  const inputAnswer=String(oldQuiz.inputAnswer??(mode==='input'?oldCorrect:'')).trim(),enabled=typeof oldQuiz.enabled==='boolean'?oldQuiz.enabled:Boolean(options.length||inputAnswer);
+  const inputAnswers=(Array.isArray(oldQuiz.inputAnswers)?oldQuiz.inputAnswers:[oldQuiz.inputAnswer??(mode==='input'?oldCorrect:'')]).map(v=>String(v||'').trim()).filter(Boolean);
+  const mysteryAnswers=(Array.isArray(oldQuiz.mysteryAnswers)?oldQuiz.mysteryAnswers:[oldQuiz.mysteryAnswer]).map(v=>String(v||'').trim()).filter(Boolean);
+  const questionSlots=[...(Array.isArray(x.questionSlots)?x.questionSlots:(x.questionSlot?[x.questionSlot]:[]))].filter((v,i,a)=>PICK_SLOTS.includes(v)&&a.indexOf(v)===i);
+  const enabled=typeof oldQuiz.enabled==='boolean'?oldQuiz.enabled:Boolean(options.length||inputAnswers.length);
   return {
     ...base,...x,
     teams:{left:{...base.teams.left,...(x.teams?.left||{})},right:{...base.teams.right,...(x.teams?.right||{})}},
     map:{...base.map,...(x.map||{})},
     slots:Object.fromEntries(ALL_SLOTS.map(k=>[k,{...blankSlot(),...(x.slots?.[k]||{})}])),
     colors:{...base.colors,...(x.colors||{})},
-    quiz:{enabled,mode,options,inputAnswer,mysteryAnswer:String(oldQuiz.mysteryAnswer||'').trim()}
+    questionSlots,
+    quiz:{enabled,mode,options,inputAnswers,mysteryAnswers}
   };
 }
 function load(){
@@ -279,14 +285,24 @@ function packSharedState(o){
   const packedMap=!map.name&&!map.image&&!mode&&!map.mystery?0:[String(map.name||''),packStateUrl(map.image||''),mode,map.mystery?1:0];
   const packedSlots=[];ALL_SLOTS.forEach((k,i)=>{const s=o?.slots?.[k];if(!s?.name&&!s?.id&&!s?.image)return;const rawId=String(s?.id||''),id=/^\d+$/.test(rawId)?Number(rawId):rawId,entry=[i,String(s?.name||''),id];if(!rawId&&s?.image)entry.push(packStateUrl(s.image));packedSlots.push(entry)});
   const packedColors=(colors.blue||'#315fdf')==='#315fdf'&&(colors.red||'#e95342')==='#e95342'&&(colors.paper||'#f4f4f0')==='#f4f4f0'?0:[colors.blue==='#315fdf'?'':String(colors.blue||''),colors.red==='#e95342'?'':String(colors.red||''),colors.paper==='#f4f4f0'?'':String(colors.paper||'')];
-  const options=Array.isArray(quiz.options)?quiz.options:[],mysteryAnswer=String(quiz.mysteryAnswer||'');let packedQuiz=0;
-  if(quiz.enabled||quiz.mode==='input'||options.length||quiz.inputAnswer||mysteryAnswer){
-    if(quiz.mode==='input')packedQuiz=[quiz.enabled?1:0,1,String(quiz.inputAnswer||''),mysteryAnswer&&normalize(mysteryAnswer)===normalize(quiz.inputAnswer)?1:(mysteryAnswer||0)];
-    else{const texts=options.map(v=>String(v?.text||'')),correct=options.map((v,i)=>v?.correct?i+1:0).filter(Boolean),mysteryIndex=options.findIndex(v=>mysteryAnswer&&normalize(v?.text)===normalize(mysteryAnswer));packedQuiz=[quiz.enabled?1:0,0,texts,correct.length?correct:0,mysteryAnswer?(mysteryIndex>=0?mysteryIndex+1:mysteryAnswer):0]}
+  const options=Array.isArray(quiz.options)?quiz.options:[],inputAnswers=uniqueAnswers(quiz.inputAnswers),mysteryAnswers=uniqueAnswers(quiz.mysteryAnswers);let packedQuiz=0;
+  if(quiz.enabled||quiz.mode==='input'||options.length||inputAnswers.length||mysteryAnswers.length){
+    if(quiz.mode==='input')packedQuiz=[quiz.enabled?1:0,1,inputAnswers,mysteryAnswers.length?mysteryAnswers:0];
+    else{const texts=options.map(v=>String(v?.text||'')),correct=options.map((v,i)=>v?.correct?i+1:0).filter(Boolean);packedQuiz=[quiz.enabled?1:0,0,texts,correct.length?correct:0,mysteryAnswers.length?mysteryAnswers:0]}
   }
-  return [3,[packTeam(teams.left),packTeam(teams.right)],packedMap,o?.questionSlot?PICK_SLOTS.indexOf(o.questionSlot)+1:0,packedSlots,packedColors,packedQuiz];
+  const questionIndexes=(Array.isArray(o?.questionSlots)?o.questionSlots:[]).map(k=>PICK_SLOTS.indexOf(k)+1).filter(Boolean),packedQuestions=questionIndexes.length>1?questionIndexes:(questionIndexes[0]||0);
+  return [4,[packTeam(teams.left),packTeam(teams.right)],packedMap,packedQuestions,packedSlots,packedColors,packedQuiz];
 }
 function unpackSharedState(p){
+  if(Array.isArray(p)&&p[0]===4){
+    const team=value=>{if(!value)return{name:'',abbr:'',logo:''};if(typeof value==='string'&&value.startsWith('@')){const known=CORESTATS_TEAM_SNAPSHOT.find(x=>x.code===value.slice(1));if(known)return{name:known.name,abbr:known.code,logo:known.logo}}return{name:String(value?.[0]||''),abbr:String(value?.[1]||''),logo:unpackStateUrl(value?.[2]||'')}};
+    const packedMap=Array.isArray(p[2])?p[2]:[],packedMode=packedMap[2];let modeName='',modeIcon='',modeColor='#7138dc';if(typeof packedMode==='number'&&packedMode>0){const preset=MODE_PRESETS[packedMode-1];if(preset){modeName=preset.ko;modeIcon=preset.icon;modeColor=preset.color}}else if(Array.isArray(packedMode)){modeName=String(packedMode[0]||'');modeIcon=unpackStateUrl(packedMode[1]||'');modeColor=String(packedMode[2]||'#7138dc')}
+    const slots=Object.fromEntries(ALL_SLOTS.map(k=>[k,blankSlot()]));(Array.isArray(p[4])?p[4]:[]).forEach(entry=>{const key=ALL_SLOTS[Number(entry?.[0])];if(key)slots[key]={name:String(entry?.[1]||''),id:String(entry?.[2]||''),image:unpackStateUrl(entry?.[3]||'')}});
+    const packedQuestions=Array.isArray(p[3])?p[3]:(p[3]?[p[3]]:[]),questionSlots=packedQuestions.map(v=>PICK_SLOTS[Number(v)-1]).filter(Boolean);
+    const packedColors=Array.isArray(p[5])?p[5]:[],packedQuiz=Array.isArray(p[6])?p[6]:[],inputMode=packedQuiz[1]===1;let quiz=blankQuiz();
+    if(packedQuiz.length){const mysteryAnswers=(Array.isArray(packedQuiz[4-inputMode])?packedQuiz[4-inputMode]:packedQuiz[4-inputMode]?[packedQuiz[4-inputMode]]:[]).map(v=>String(v||''));if(inputMode)quiz={enabled:Boolean(packedQuiz[0]),mode:'input',options:[],inputAnswers:(Array.isArray(packedQuiz[2])?packedQuiz[2]:[packedQuiz[2]]).map(v=>String(v||'')).filter(Boolean),mysteryAnswers};else{const texts=Array.isArray(packedQuiz[2])?packedQuiz[2]:[],correct=new Set(Array.isArray(packedQuiz[3])?packedQuiz[3].map(Number):[]);quiz={enabled:Boolean(packedQuiz[0]),mode:'choices',options:texts.map((text,i)=>({text:String(text||''),correct:correct.has(i+1)})),inputAnswers:[],mysteryAnswers}}}
+    return {teams:{left:team(p[1]?.[0]),right:team(p[1]?.[1])},map:{name:String(packedMap[0]||''),image:unpackStateUrl(packedMap[1]||''),modeName,modeIcon,modeColor,mystery:Boolean(packedMap[3])},questionSlots,slots,colors:{blue:String(packedColors[0]||'#315fdf'),red:String(packedColors[1]||'#e95342'),paper:String(packedColors[2]||'#f4f4f0')},quiz};
+  }
   if(Array.isArray(p)&&p[0]===3){
     const team=value=>{if(!value)return{name:'',abbr:'',logo:''};if(typeof value==='string'&&value.startsWith('@')){const known=CORESTATS_TEAM_SNAPSHOT.find(x=>x.code===value.slice(1));if(known)return{name:known.name,abbr:known.code,logo:known.logo}}return{name:String(value?.[0]||''),abbr:String(value?.[1]||''),logo:unpackStateUrl(value?.[2]||'')}};
     const packedMap=Array.isArray(p[2])?p[2]:[],packedMode=packedMap[2];let modeName='',modeIcon='',modeColor='#7138dc';if(typeof packedMode==='number'&&packedMode>0){const preset=MODE_PRESETS[packedMode-1];if(preset){modeName=preset.ko;modeIcon=preset.icon;modeColor=preset.color}}else if(Array.isArray(packedMode)){modeName=String(packedMode[0]||'');modeIcon=unpackStateUrl(packedMode[1]||'');modeColor=String(packedMode[2]||'#7138dc')}
@@ -316,8 +332,8 @@ function lzwDecompress(bytes){
 }
 function bytesToBase64Url(bytes){let binary='';for(let i=0;i<bytes.length;i+=16384)binary+=String.fromCharCode(...bytes.subarray(i,i+16384));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function base64UrlToBytes(value){let s=String(value||'').replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const binary=atob(s);return Uint8Array.from(binary,ch=>ch.charCodeAt(0))}
-function encodeState(o){const raw=new TextEncoder().encode(JSON.stringify(packSharedState(o))),compressed=lzwCompress(raw);return compressed.length<raw.length?`3.${bytesToBase64Url(compressed)}`:`3r.${bytesToBase64Url(raw)}`}
-function decodeState(value){const s=String(value||''),versioned=s.match(/^([23])(r?)\.(.+)$/);if(versioned){const raw=versioned[2]?base64UrlToBytes(versioned[3]):lzwDecompress(base64UrlToBytes(versioned[3]));return unpackSharedState(JSON.parse(new TextDecoder().decode(raw)))}const raw=base64UrlToBytes(s);return JSON.parse(new TextDecoder().decode(raw))}
+function encodeState(o){const raw=new TextEncoder().encode(JSON.stringify(packSharedState(o))),compressed=lzwCompress(raw);return compressed.length<raw.length?`4.${bytesToBase64Url(compressed)}`:`4r.${bytesToBase64Url(raw)}`}
+function decodeState(value){const s=String(value||''),versioned=s.match(/^([234])(r?)\.(.+)$/);if(versioned){const raw=versioned[2]?base64UrlToBytes(versioned[3]):lzwDecompress(base64UrlToBytes(versioned[3]));return unpackSharedState(JSON.parse(new TextDecoder().decode(raw)))}const raw=base64UrlToBytes(s);return JSON.parse(new TextDecoder().decode(raw))}
 function shareUrl(o=state,mode=''){const base=location.href.split('#')[0].split('?')[0];const query=mode==='quiz'?'?quiz=1':mode==='preview'?'?preview=1':'';return `${base}${query}#s=${encodeState(o)}`}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1800)}
 async function copy(text,msg){try{await navigator.clipboard.writeText(text);toast(msg)}catch{prompt('아래 링크를 복사하세요.',text)}}
@@ -325,7 +341,7 @@ async function copy(text,msg){try{await navigator.clipboard.writeText(text);toas
 function makeAsset(slot){const src=slot?.id?`${BRAWLER_PORTRAIT_ROOT}${slot.id}.png`:(slot?.image||'');const d=document.createElement('div');d.className='asset'+(src?'':' empty');if(src){const img=document.createElement('img');img.className='brawler-portrait';setImg(img,src);img.alt=slot.name||'';d.appendChild(img)}return d}
 function makeQuestionMark(alt='미스테리'){const q=document.createElement('div');q.className='question-mark';const img=document.createElement('img');img.src=QUESTION_IMAGE;img.alt=alt;q.appendChild(img);return q}
 function makeMysteryCard(label,isMap=false){const b=document.createElement('button');b.className=`card${isMap?' map-card':''} mystery-card`;b.innerHTML=`<img src="${QUESTION_IMAGE}" alt="?"><div class="label">${esc(label)}</div>`;return b}
-function renderSlot(k){const host=document.getElementById(k);host.innerHTML='';if(state.questionSlot===k&&PICK_SLOTS.includes(k))host.appendChild(makeQuestionMark('미스테리 픽'));else host.appendChild(makeAsset(state.slots[k]))}
+function renderSlot(k){const host=document.getElementById(k);host.innerHTML='';if((state.questionSlots||[]).includes(k)&&PICK_SLOTS.includes(k))host.appendChild(makeQuestionMark('미스테리 픽'));else host.appendChild(makeAsset(state.slots[k]))}
 function renderMap(){mapAsset.querySelector('.question-mark')?.remove();if(state.map?.mystery){setImg(mapImg,'');mapAsset.classList.remove('empty');mapAsset.appendChild(makeQuestionMark('미스테리 맵'))}else{setImg(mapImg,state.map?.image||'');mapAsset.classList.toggle('empty',!state.map?.image)}}
 function renderLogo(id,team){const host=document.getElementById(id);host.innerHTML='';host.classList.toggle('empty',!team.logo);if(team.logo){const img=document.createElement('img');setImg(img,team.logo);img.alt=team.name||'';host.appendChild(img)}}
 function fitTeamName(el){let size=58;el.style.fontSize=size+'px';if(!el.textContent)return;while(el.scrollWidth>el.clientWidth&&size>34){size-=1;el.style.fontSize=size+'px'}}
@@ -359,13 +375,30 @@ function bindBrawlerAutocomplete(input,list,onChoose){
   };
   input.addEventListener('focus',draw);input.addEventListener('input',draw);input.addEventListener('blur',()=>setTimeout(close,100));
 }
-function mysteryActive(){return Boolean(state.questionSlot||state.map?.mystery)}
-function activeMysteryAnswer(){return mysteryActive()?String(state.quiz?.mysteryAnswer||'').trim():''}
+function uniqueAnswers(values){const seen=new Set();return (values||[]).map(v=>String(v||'').trim()).filter(v=>{const key=normalize(v);if(!key||seen.has(key))return false;seen.add(key);return true})}
+function activeQuestionSlots(){return (Array.isArray(state.questionSlots)?state.questionSlots:[]).filter(k=>PICK_SLOTS.includes(k))}
+function mysteryActive(){return Boolean(activeQuestionSlots().length||state.map?.mystery)}
+function activeMysteryAnswers(){return mysteryActive()?uniqueAnswers(state.quiz?.mysteryAnswers):[]}
+function currentMysteryAnswers(){return uniqueAnswers([...activeQuestionSlots().map(k=>state.slots?.[k]?.name||''),state.map?.mystery?state.map?.name||'':''])}
+function missingMysteryCount(){return activeQuestionSlots().filter(k=>!String(state.slots?.[k]?.name||'').trim()).length+(state.map?.mystery&&!String(state.map?.name||'').trim()?1:0)}
+function isMysteryAnswer(value){const key=normalize(value);return Boolean(key&&activeMysteryAnswers().some(v=>normalize(v)===key))}
+function syncMysteryAnswers(){
+  const previous=uniqueAnswers(state.quiz?.mysteryAnswers),next=currentMysteryAnswers(),nextKeys=new Set(next.map(normalize));state.quiz.mysteryAnswers=next;
+  if(state.quiz.mode==='input'){
+    const oldKeys=new Set(previous.filter(v=>!nextKeys.has(normalize(v))).map(normalize));state.quiz.inputAnswers=(Array.isArray(state.quiz.inputAnswers)?state.quiz.inputAnswers:[]).filter(v=>!oldKeys.has(normalize(v)));
+    next.forEach(answer=>{if(!state.quiz.inputAnswers.some(v=>normalize(v)===normalize(answer)))state.quiz.inputAnswers.push(answer)});
+  }else{
+    previous.filter(v=>!nextKeys.has(normalize(v))).forEach(answer=>{const option=state.quiz.options.find(v=>normalize(v?.text)===normalize(answer));if(option)option.correct=false});
+    next.forEach(answer=>{const option=state.quiz.options.find(v=>normalize(v?.text)===normalize(answer));if(option)option.correct=true;else state.quiz.options.push({text:answer,correct:true})});
+  }
+  resetQuizAttempt();
+}
 function cleanQuizOptions(){
   const seen=new Set();
   return (state.quiz?.options||[]).map(v=>({text:String(v?.text||'').trim(),correct:Boolean(v?.correct)})).filter(v=>{const key=normalize(v.text);if(!key||seen.has(key))return false;seen.add(key);return true});
 }
-function quizConfigured(){if(state.quiz?.mode==='input')return Boolean(String(state.quiz?.inputAnswer||'').trim());const options=cleanQuizOptions();return options.length>0&&options.some(v=>v.correct)}
+function cleanQuizInputAnswers(){return uniqueAnswers(state.quiz?.inputAnswers)}
+function quizConfigured(){if(state.quiz?.mode==='input')return cleanQuizInputAnswers().length>0;const options=cleanQuizOptions();return options.length>0&&options.some(v=>v.correct)}
 function quizQuestion(){return '숨겨진 것은 무엇일까요?'}
 function quizBrawlerAsset(value){
   const key=normalize(value);if(!key)return null;
@@ -385,47 +418,46 @@ function syncQuizOptionPortrait(input){
 const SEARCH_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>';
 function renderQuizEditor(panel){
   const q=state.quiz||blankQuiz(),inputMode=q.mode==='input',options=Array.isArray(q.options)?q.options:[];
+  if(inputMode&&(!Array.isArray(q.inputAnswers)||!q.inputAnswers.length))q.inputAnswers=[''];
   const rows=options.map((option,index)=>{
-    const text=String(option?.text||''),linked=Boolean(mysteryActive()&&q.mysteryAnswer&&normalize(text)===normalize(q.mysteryAnswer)),portrait=quizPortraitMarkup(text,'quiz-option-thumb');
-    return `<div class="quiz-edit-row"><div class="quiz-option-visual ${portrait?'':'empty'}" data-option-number="${String(index+1).padStart(2,'0')}">${portrait}</div><div class="quiz-option-field"><input class="quiz-option-input" data-option-index="${index}" value="${escAttr(text)}" placeholder="항목 ${index+1}" ${linked?'readonly':''}><button class="quiz-search" data-search-index="${index}" aria-label="항목 검색" title="항목 검색">${SEARCH_ICON}</button></div><button class="quiz-mark-correct ${option?.correct?'active':''}" data-correct-index="${index}" aria-pressed="${Boolean(option?.correct)}" title="정답 지정">정답</button><button class="quiz-remove" data-remove-index="${index}" aria-label="항목 삭제" title="항목 삭제">×</button></div>`;
+    const text=String(option?.text||''),linked=isMysteryAnswer(text),portrait=quizPortraitMarkup(text,'quiz-option-thumb');
+    return `<div class="quiz-edit-row ${linked?'linked':''}"><div class="quiz-option-visual ${portrait?'':'empty'}" data-option-number="${String(index+1).padStart(2,'0')}">${portrait}</div><div class="quiz-option-field"><input class="quiz-option-input" data-option-index="${index}" value="${escAttr(text)}" placeholder="항목 ${index+1}" ${linked?'readonly':''}><button class="quiz-search" data-search-index="${index}" aria-label="항목 검색" title="항목 검색" ${linked?'disabled':''}>${SEARCH_ICON}</button></div><button class="quiz-mark-correct ${option?.correct?'active':''}" data-correct-index="${index}" aria-pressed="${Boolean(option?.correct)}" title="${linked?'미스테리 정답':'정답 지정'}">${linked?'연결':'정답'}</button><button class="quiz-remove" data-remove-index="${index}" aria-label="항목 삭제" title="항목 삭제" ${linked?'disabled':''}>×</button></div>`;
   }).join('');
-  panel.innerHTML=`<div class="quiz-editor-head"><h2>퀴즈 만들기</h2><div class="quiz-mode-switch" role="group" aria-label="퀴즈 방식"><button class="quiz-mode-btn ${!inputMode?'active':''}" data-quiz-mode="choices">항목</button><button class="quiz-mode-btn ${inputMode?'active':''}" data-quiz-mode="input">입력</button></div></div>${inputMode?`<div class="quiz-answer-row"><div class="quiz-autocomplete"><input class="quiz-answer-editor" id="quizDirectAnswer" value="${escAttr(q.inputAnswer||'')}" placeholder="정답" autocomplete="off" ${mysteryActive()?'readonly':''}><div class="quiz-suggestions" id="quizEditorSuggestions" role="listbox"></div></div><button class="quiz-search" id="quizInputSearch" aria-label="정답 검색" title="정답 검색">${SEARCH_ICON}</button></div>`:`<div class="quiz-edit-list">${rows}</div><button class="quiz-add" id="quizAddOption" aria-label="항목 추가" title="항목 추가"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}`;
+  const inputRows=(q.inputAnswers||[]).map((answer,index)=>{const linked=isMysteryAnswer(answer);return `<div class="quiz-input-edit-row ${linked?'linked':''}"><span class="quiz-answer-index">${linked?'?':String(index+1).padStart(2,'0')}</span><div class="quiz-option-field"><div class="quiz-autocomplete"><input class="quiz-option-input" data-input-answer-index="${index}" value="${escAttr(answer)}" placeholder="정답 ${index+1}" autocomplete="off" ${linked?'readonly':''}><div class="quiz-suggestions" id="quizEditorSuggestions${index}" role="listbox"></div></div><button class="quiz-search" data-input-search-index="${index}" aria-label="정답 검색" title="정답 검색" ${linked?'disabled':''}>${SEARCH_ICON}</button></div><button class="quiz-remove" data-input-remove-index="${index}" aria-label="정답 삭제" title="정답 삭제" ${linked?'disabled':''}>×</button></div>`}).join('');
+  panel.innerHTML=`<div class="quiz-editor-head"><h2>퀴즈 만들기</h2><div class="quiz-mode-switch" role="group" aria-label="퀴즈 방식"><button class="quiz-mode-btn ${!inputMode?'active':''}" data-quiz-mode="choices">항목</button><button class="quiz-mode-btn ${inputMode?'active':''}" data-quiz-mode="input">입력</button></div></div>${inputMode?`<div class="quiz-input-edit-list">${inputRows}</div><button class="quiz-add" id="quizAddInputAnswer" aria-label="정답 추가" title="정답 추가"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`:`<div class="quiz-edit-list">${rows}</div><button class="quiz-add" id="quizAddOption" aria-label="항목 추가" title="항목 추가"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}`;
   bindQuizPortraitErrors(panel);
   panel.querySelectorAll('[data-quiz-mode]').forEach(btn=>btn.onclick=()=>{
-    const mode=btn.dataset.quizMode;if(mode===state.quiz.mode)return;state.quiz.mode=mode;
-    if(state.quiz.mysteryAnswer){
-      if(mode==='input')state.quiz.inputAnswer=state.quiz.mysteryAnswer;
-      else{let option=state.quiz.options.find(v=>normalize(v?.text)===normalize(state.quiz.mysteryAnswer));if(option)option.correct=true;else state.quiz.options.push({text:state.quiz.mysteryAnswer,correct:true})}
-    }
-    resetQuizAttempt();save();renderQuizPanel();
+    const mode=btn.dataset.quizMode;if(mode===state.quiz.mode)return;state.quiz.mode=mode;syncMysteryAnswers();save();renderQuizPanel();
   });
   panel.querySelectorAll('[data-option-index]').forEach(input=>input.oninput=()=>{const index=Number(input.dataset.optionIndex);state.quiz.options[index].text=input.value;syncQuizOptionPortrait(input);save()});
-  panel.querySelectorAll('[data-search-index]').forEach(btn=>btn.onclick=()=>{const index=Number(btn.dataset.searchIndex),option=state.quiz.options[index];if(mysteryActive()&&normalize(option?.text)===normalize(state.quiz.mysteryAnswer)){toast('미스테리 선택창에서 정답을 바꿔 주세요.');return}openQuizAssetSearch('option',index)});
+  panel.querySelectorAll('[data-search-index]').forEach(btn=>btn.onclick=()=>{const index=Number(btn.dataset.searchIndex),option=state.quiz.options[index];if(isMysteryAnswer(option?.text)){toast('미스테리 선택창에서 정답을 바꿔 주세요.');return}openQuizAssetSearch('option',index)});
   panel.querySelectorAll('[data-correct-index]').forEach(btn=>btn.onclick=()=>{
-    const index=Number(btn.dataset.correctIndex),option=state.quiz.options[index],linked=Boolean(mysteryActive()&&state.quiz.mysteryAnswer&&normalize(option?.text)===normalize(state.quiz.mysteryAnswer));
+    const index=Number(btn.dataset.correctIndex),option=state.quiz.options[index],linked=isMysteryAnswer(option?.text);
     if(linked&&option.correct){toast('미스테리 정답은 해제할 수 없습니다.');return}option.correct=!option.correct;resetQuizAttempt();save();renderQuizPanel();
   });
   panel.querySelectorAll('[data-remove-index]').forEach(btn=>btn.onclick=()=>{
-    const index=Number(btn.dataset.removeIndex),option=state.quiz.options[index],linked=Boolean(mysteryActive()&&state.quiz.mysteryAnswer&&normalize(option?.text)===normalize(state.quiz.mysteryAnswer));
+    const index=Number(btn.dataset.removeIndex),option=state.quiz.options[index],linked=isMysteryAnswer(option?.text);
     if(linked){toast('미스테리 정답은 삭제할 수 없습니다.');return}state.quiz.options.splice(index,1);resetQuizAttempt();save();renderQuizPanel();
   });
   const add=document.getElementById('quizAddOption');if(add)add.onclick=()=>{state.quiz.options.push({text:'',correct:false});save();renderQuizPanel();panel.querySelector('.quiz-edit-row:last-of-type .quiz-option-input')?.focus()};
-  const direct=document.getElementById('quizDirectAnswer');if(direct){direct.oninput=()=>{state.quiz.inputAnswer=direct.value;resetQuizAttempt();save()};bindBrawlerAutocomplete(direct,document.getElementById('quizEditorSuggestions'),value=>{state.quiz.inputAnswer=value;resetQuizAttempt();save()})}
-  const inputSearch=document.getElementById('quizInputSearch');if(inputSearch)inputSearch.onclick=()=>{if(mysteryActive()){toast('미스테리 선택창에서 정답을 바꿔 주세요.');return}openQuizAssetSearch('input')};
+  panel.querySelectorAll('[data-input-answer-index]').forEach(input=>{const index=Number(input.dataset.inputAnswerIndex);input.oninput=()=>{state.quiz.inputAnswers[index]=input.value;resetQuizAttempt();save()};bindBrawlerAutocomplete(input,document.getElementById(`quizEditorSuggestions${index}`),value=>{state.quiz.inputAnswers[index]=value;resetQuizAttempt();save()})});
+  panel.querySelectorAll('[data-input-search-index]').forEach(btn=>btn.onclick=()=>{const index=Number(btn.dataset.inputSearchIndex);if(isMysteryAnswer(state.quiz.inputAnswers[index])){toast('미스테리 선택창에서 정답을 바꿔 주세요.');return}openQuizAssetSearch('input',index)});
+  panel.querySelectorAll('[data-input-remove-index]').forEach(btn=>btn.onclick=()=>{const index=Number(btn.dataset.inputRemoveIndex);if(isMysteryAnswer(state.quiz.inputAnswers[index])){toast('미스테리 정답은 삭제할 수 없습니다.');return}state.quiz.inputAnswers.splice(index,1);resetQuizAttempt();save();renderQuizPanel()});
+  const addInput=document.getElementById('quizAddInputAnswer');if(addInput)addInput.onclick=()=>{const last=state.quiz.inputAnswers.length-1;if(last>=0&&!String(state.quiz.inputAnswers[last]||'').trim()){panel.querySelector(`[data-input-answer-index="${last}"]`)?.focus();return}state.quiz.inputAnswers.push('');save();renderQuizPanel();panel.querySelector('.quiz-input-edit-row:last-of-type .quiz-option-input')?.focus()};
 }
 function renderQuizSolver(panel){
-  const mystery=mysteryActive(),mysteryAnswer=activeMysteryAnswer(),custom=Boolean(state.quiz?.enabled),inputMode=mystery&&!custom?true:state.quiz?.mode==='input';let options=cleanQuizOptions();
-  if(mystery&&!inputMode&&mysteryAnswer&&!options.some(v=>normalize(v.text)===normalize(mysteryAnswer)))options.unshift({text:mysteryAnswer,correct:true});
-  const configured=mystery?Boolean(mysteryAnswer):(custom&&quizConfigured());
+  const mystery=mysteryActive(),mysteryAnswers=activeMysteryAnswers(),custom=Boolean(state.quiz?.enabled),inputMode=mystery&&!custom?true:state.quiz?.mode==='input';let options=cleanQuizOptions();
+  if(mystery&&!inputMode)mysteryAnswers.slice().reverse().forEach(answer=>{if(!options.some(v=>normalize(v.text)===normalize(answer)))options.unshift({text:answer,correct:true})});
+  const configured=mystery?mysteryAnswers.length>0:(custom&&quizConfigured());
   if(!configured){panel.innerHTML=`<h2>${esc(quizQuestion())}</h2><div class="quiz-result neutral show">정답이 설정되지 않았습니다.</div>`;return}
-  const answers=inputMode?[mystery?mysteryAnswer:String(state.quiz.inputAnswer||'').trim()]:options.filter(v=>v.correct||mystery&&normalize(v.text)===normalize(mysteryAnswer)).map(v=>v.text);
+  const answers=inputMode?uniqueAnswers([...(custom?cleanQuizInputAnswers():[]),...mysteryAnswers]):options.filter(v=>v.correct||mysteryAnswers.some(answer=>normalize(v.text)===normalize(answer))).map(v=>v.text);
   const controls=inputMode?(()=>{const outcome=quizRevealed?(quizResultCorrect?'correct':'wrong'):'';return `<div class="quiz-input-row ${outcome}"><div class="quiz-autocomplete"><input id="quizAnswerInput" value="${escAttr(quizSelectedAnswer)}" placeholder="정답을 입력하세요" aria-label="정답 입력" autocomplete="off" ${quizRevealed?'disabled':''}><div class="quiz-suggestions" id="quizSolverSuggestions" role="listbox"></div></div><button class="quiz-submit" id="quizSubmit" ${quizRevealed?'disabled':''}>${quizRevealed?'완료':'정답 확인'}</button>${quizRevealed?`<span class="quiz-input-mark" aria-label="${quizResultCorrect?'정답':'오답'}">${quizResultCorrect?'O':'X'}</span>`:''}</div>`})():`<div class="quiz-options">${options.map((v,i)=>{const chosen=normalize(quizSelectedAnswer)===normalize(v.text),correct=answers.some(a=>normalize(a)===normalize(v.text));const outcome=quizRevealed?(correct?'answer-correct':chosen?'answer-wrong':'locked'):(chosen?'selected':'');const mark=quizRevealed&&(correct||chosen)?`<span class="quiz-choice-mark" aria-label="${correct?'정답':'오답'}">${correct?'O':'X'}</span>`:'';const portrait=quizPortraitMarkup(v.text,'quiz-choice-portrait');return `<button class="quiz-choice ${outcome}" data-quiz-choice="${escAttr(v.text)}" ${quizRevealed?'disabled':''}><span class="quiz-choice-main">${portrait}<span class="quiz-choice-copy"><span class="quiz-choice-index">${String(i+1).padStart(2,'0')}</span><span class="quiz-choice-label">${esc(v.text)}</span></span></span>${mark}</button>`}).join('')}</div>`;
-  const result=quizRevealed?`<div class="quiz-result ${quizResultCorrect?'correct':'wrong'} show"><div class="quiz-result-title"><span class="quiz-result-symbol">${quizResultCorrect?'O':'X'}</span><span>${esc(quizResultText)}</span></div><div class="quiz-result-message">정답: ${esc(answers.join(', '))}</div><a class="quiz-editor-link" href="${escAttr(publicSiteUrl())}">직접 퀴즈 만들기</a></div>`:'';
+  const result=quizRevealed?`<div class="quiz-result ${quizResultCorrect?'correct':'wrong'} show"><div class="quiz-result-title"><span class="quiz-result-symbol">${quizResultCorrect?'O':'X'}</span><span>${esc(quizResultText)}</span></div><div class="quiz-result-message">정답 · ${esc(answers.join(' · '))}</div><a class="quiz-editor-link" href="${escAttr(publicSiteUrl())}">드래프트 퀴즈 직접 만들기</a></div>`:'';
   panel.innerHTML=`<h2>${esc(quizQuestion())}</h2>${controls}${result}`;
   bindQuizPortraitErrors(panel);
   panel.querySelectorAll('[data-quiz-choice]').forEach(btn=>btn.onclick=()=>{if(quizRevealed)return;quizSelectedAnswer=btn.dataset.quizChoice||'';quizResultCorrect=answers.some(v=>normalize(v)===normalize(quizSelectedAnswer));quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()});
   const answerInput=document.getElementById('quizAnswerInput');if(answerInput&&!quizRevealed){answerInput.oninput=()=>{quizSelectedAnswer=answerInput.value};answerInput.onkeydown=e=>{if(e.key==='Enter')document.getElementById('quizSubmit')?.click()};bindBrawlerAutocomplete(answerInput,document.getElementById('quizSolverSuggestions'),value=>{quizSelectedAnswer=value})}
-  const submit=document.getElementById('quizSubmit');if(submit&&!quizRevealed)submit.onclick=()=>{if(!String(quizSelectedAnswer).trim()){toast('정답을 입력해 주세요.');return}quizResultCorrect=normalize(quizSelectedAnswer)===normalize(answers[0]);quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()};
+  const submit=document.getElementById('quizSubmit');if(submit&&!quizRevealed)submit.onclick=()=>{if(!String(quizSelectedAnswer).trim()){toast('정답을 입력해 주세요.');return}quizResultCorrect=answers.some(answer=>normalize(quizSelectedAnswer)===normalize(answer));quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()};
 }
 function renderQuizPanel(){const panel=document.getElementById('quizPanel'),preview=document.body.classList.contains('preview-mode'),show=preview?Boolean(state.quiz?.enabled||mysteryActive()):Boolean(state.quiz?.enabled);panel.classList.toggle('show',show);if(!show){panel.innerHTML='';return}if(preview)renderQuizSolver(panel);else renderQuizEditor(panel)}
 
@@ -433,7 +465,7 @@ function openQuizAssetSearch(target,index){
   openModal(target==='input'?'정답 선택':'항목 선택');
   modalBody.innerHTML=`<div class="tabs" id="answerAssetTabs"><button class="tab active" data-answer-type="brawler">브롤러</button><button class="tab" data-answer-type="map">맵</button></div><div class="searchbar"><input id="answerAssetSearch" placeholder="검색"></div><div class="grid" id="answerAssetGrid"></div>`;
   const tabs=document.getElementById('answerAssetTabs'),search=document.getElementById('answerAssetSearch'),grid=document.getElementById('answerAssetGrid');let type='brawler';
-  const choose=value=>{if(target==='input')state.quiz.inputAnswer=value;else state.quiz.options[index].text=value;resetQuizAttempt();save();renderQuizPanel();closeModal()};
+  const choose=value=>{if(target==='input')state.quiz.inputAnswers[index]=value;else state.quiz.options[index].text=value;resetQuizAttempt();save();renderQuizPanel();closeModal()};
   const draw=()=>{const q=normalize(search.value);grid.innerHTML='';if(type==='brawler'){
     const list=brawlers.filter(b=>!q||normalize(b.name).includes(q)||normalize(brawlerKoName(b)).includes(q)).sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));
     if(!list.length){grid.innerHTML=`<div class="${brawlers.length?'empty-result':'loading'}">${brawlers.length?'검색 결과가 없습니다.':'불러오는 중…'}</div>`;return}
@@ -462,7 +494,7 @@ async function requestSpooShortUrl(longUrl){const response=await shortUrlRequest
 async function requestCleanShortUrl(longUrl){const response=await shortUrlRequest('https://cleanuri.com/api/v1/shorten',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'url='+encodeURIComponent(longUrl)}),data=await response.json();if(!response.ok)throw new Error(data?.error||'CleanURI 단축 실패');return validShortUrl(data?.result_url)}
 async function shortenQuizUrl(longUrl){const cached=cachedShortUrl(longUrl);if(cached)return cached;for(const request of [requestSpooShortUrl,requestCleanShortUrl]){try{const short=await request(longUrl);if(short){saveShortUrl(longUrl,short);return short}}catch(e){console.warn('short url',e)}}return longUrl}
 function composeXText(){return `브롤스타즈 드래프트 퀴즈에 도전해 보세요!\n\n#브롤스타즈 #BrawlStars #드래프트퀴즈\n${publicSiteUrl()}`}
-function requireMysteryAnswer(){if(!mysteryActive()||activeMysteryAnswer())return true;alert('미스테리 정답을 선택해 주세요.');return false}
+function requireMysteryAnswer(){const missing=missingMysteryCount();if(!missing)return true;alert(missing>1?`미스테리 ${missing}개의 정답을 선택해 주세요.`:'미스테리 정답을 선택해 주세요.');return false}
 function openShareMenu(){
   openModal('공유');
   modalBody.innerHTML=`<div class="share-grid">
@@ -475,24 +507,8 @@ function openShareMenu(){
   document.getElementById('shareX').onclick=()=>{if(requireMysteryAnswer())window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composeXText())}`,'_blank','noopener')};
 }
 
-function ensureMysteryAnswer(answer){
-  const value=String(answer||'').trim(),previous=String(state.quiz?.mysteryAnswer||'').trim();if(!value)return;
-  if(state.quiz.mode==='input')state.quiz.inputAnswer=value;
-  else{
-    if(previous&&normalize(previous)!==normalize(value)){const old=state.quiz.options.find(v=>normalize(v?.text)===normalize(previous));if(old)old.correct=false}
-    let option=state.quiz.options.find(v=>normalize(v?.text)===normalize(value));if(option)option.correct=true;else state.quiz.options.push({text:value,correct:true});
-  }
-  state.quiz.mysteryAnswer=value;resetQuizAttempt();
-}
-function clearMysteryAnswer(){
-  const answer=String(state.quiz?.mysteryAnswer||'').trim();if(!answer)return;
-  if(state.quiz.mode==='input'&&normalize(state.quiz.inputAnswer)===normalize(answer))state.quiz.inputAnswer='';
-  if(state.quiz.mode==='choices')state.quiz.options=state.quiz.options.map(v=>normalize(v?.text)===normalize(answer)?{...v,correct:false}:v);
-  state.quiz.mysteryAnswer='';resetQuizAttempt();
-}
-function clearQuestionMystery(){
-  if(!state.questionSlot)return;state.questionSlot='';clearMysteryAnswer();
-}
+function addQuestionMystery(slotKey){if(!PICK_SLOTS.includes(slotKey))return;if(!state.questionSlots.includes(slotKey))state.questionSlots.push(slotKey);syncMysteryAnswers()}
+function clearQuestionMystery(slotKey){if(!slotKey)return;state.questionSlots=activeQuestionSlots().filter(k=>k!==slotKey);syncMysteryAnswers()}
 
 function openBrawler(slotKey){
   const originSlotKey=slotKey,run=SLOT_RUNS.find(group=>group.includes(slotKey))||[slotKey],isPick=PICK_SLOTS.includes(slotKey),isGlobal=GLOBAL_SLOTS.includes(slotKey);let activeSlotKey=slotKey;openModal(SLOT_NAMES[slotKey]);
@@ -500,7 +516,7 @@ function openBrawler(slotKey){
   const search=document.getElementById('brawlerSearch'),grid=document.getElementById('brawlerGrid');
   const matches=(slot,b)=>String(state.slots[slot]?.id||'')===String(b?.id||'');
   const moveToFirstEmpty=()=>{const first=run.find(k=>!state.slots[k]?.name);if(first)activeSlotKey=first};
-  const cancelSlot=target=>{if(!run.includes(target))return;if(state.questionSlot===target)clearQuestionMystery();state.slots[target]=blankSlot();moveToFirstEmpty()};
+  const cancelSlot=target=>{if(!run.includes(target))return;if(activeQuestionSlots().includes(target))clearQuestionMystery(target);state.slots[target]=blankSlot();syncMysteryAnswers();moveToFirstEmpty()};
   const advance=()=>{const start=run.indexOf(activeSlotKey);for(let i=1;i<run.length;i++){const next=run[(start+i)%run.length];if(!state.slots[next]?.name){activeSlotKey=next;break}}};
   const draw=()=>{
     modalTitle.textContent=SLOT_NAMES[activeSlotKey];
@@ -508,11 +524,11 @@ function openBrawler(slotKey){
     const list=brawlers.filter(b=>{const ko=brawlerKoName(b);return !q||normalize(b.name).includes(q)||normalize(ko).includes(q)});
     const historySlots=isPick?PICK_SLOTS:isGlobal?GLOBAL_SLOTS:BAN_SLOTS.includes(originSlotKey)?BAN_SLOTS:[],historyIndex=b=>{const index=historySlots.findIndex(k=>matches(k,b));return index<0?Number.MAX_SAFE_INTEGER:index};
     list.sort((a,b)=>historyIndex(a)-historyIndex(b)||brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));
-    const selectedMystery=state.questionSlot===originSlotKey;grid.innerHTML='';
+    const selectedMystery=activeQuestionSlots().includes(originSlotKey);grid.innerHTML='';
     if(isPick){
       const mysteryBtn=makeMysteryCard('미스테리 픽');
       mysteryBtn.classList.toggle('mystery-pending',selectedMystery);mysteryBtn.setAttribute('aria-pressed',String(selectedMystery));
-      mysteryBtn.onclick=()=>{if(selectedMystery)clearQuestionMystery();else{if(state.map?.mystery)clearMapMystery();if(state.questionSlot&&state.questionSlot!==originSlotKey)clearQuestionMystery();state.questionSlot=originSlotKey;const answer=state.slots[originSlotKey]?.name||'';if(answer)ensureMysteryAnswer(answer);else clearMysteryAnswer()}render();draw()};
+      mysteryBtn.onclick=()=>{if(selectedMystery)clearQuestionMystery(originSlotKey);else addQuestionMystery(originSlotKey);render();draw()};
       grid.appendChild(mysteryBtn);
     }
     if(!brawlers.length){grid.insertAdjacentHTML('beforeend','<div class="loading">브롤러 목록을 불러오는 중…</div>');return}
@@ -523,7 +539,7 @@ function openBrawler(slotKey){
       const removableSlot=selected?activeSlotKey:usedSlots.slice().sort((a,b)=>run.indexOf(b)-run.indexOf(a))[0];
       btn.className='card';btn.classList.toggle('selected',selected&&!answerSelected);btn.classList.toggle('mystery-answer-card',answerSelected);btn.classList.toggle('history-card',usedSlots.length>0);btn.setAttribute('aria-pressed',String(usedSlots.length>0));if(removableSlot)btn.title=`${SLOT_NAMES[removableSlot]} 선택 취소`;
       const sub=usedSlots.length?usedSlots.map(k=>SLOT_NAMES[k]).join(' · '):(b.name||'');btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(thumb)}" alt=""><div class="label">${esc(ko)}</div><div class="sub-label">${esc(sub)}</div>`;
-      btn.onclick=()=>{if(removableSlot)cancelSlot(removableSlot);else{state.slots[activeSlotKey]={name:ko,id,image:img};if(state.questionSlot===activeSlotKey)ensureMysteryAnswer(ko);advance()}render();draw()};
+      btn.onclick=()=>{if(removableSlot)cancelSlot(removableSlot);else{state.slots[activeSlotKey]={name:ko,id,image:img};syncMysteryAnswers();advance()}render();draw()};
       grid.appendChild(btn);
     });
   };
@@ -532,8 +548,8 @@ function openBrawler(slotKey){
 }
 
 function modeTabs(){return `<button class="tab ${activeMapMode==='ALL'?'active':''}" data-mode="ALL">전체</button>`+MODE_PRESETS.map(m=>`<button class="tab ${activeMapMode===m.name?'active':''}" data-mode="${escAttr(m.name)}">${m.ko}</button>`).join('')}
-function clearMapMystery(){if(!state.map?.mystery)return;state.map.mystery=false;clearMysteryAnswer()}
-function clearMapSelection(){if(state.map?.mystery)clearMysteryAnswer();state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false}}
+function clearMapMystery(){if(!state.map?.mystery)return;state.map.mystery=false;syncMysteryAnswers()}
+function clearMapSelection(){state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:false};syncMysteryAnswers()}
 function openMap(){
   openModal('맵 선택');
   modalBody.innerHTML=`<div class="tabs" id="poolTabs"><button class="tab ${activeMapPool==='ranked'?'active':''}" data-pool="ranked">경쟁전</button><button class="tab ${activeMapPool==='bsc'?'active':''}" data-pool="bsc">BSC</button><button class="tab ${activeMapPool==='all'?'active':''}" data-pool="all">전체 맵</button></div><div class="tabs" id="modeTabs">${modeTabs()}</div><div class="searchbar"><input id="mapSearch" placeholder="맵 검색"></div><div id="mapGrid" class="grid"></div><div class="actions"><button class="action red" id="clearMap">맵/모드 비우기</button></div>`;
@@ -544,7 +560,7 @@ function openMap(){
     grid.innerHTML='';
     const mysterySelected=Boolean(state.map?.mystery),mysteryBtn=makeMysteryCard('미스테리 맵',true);
     mysteryBtn.classList.toggle('mystery-pending',mysterySelected);mysteryBtn.setAttribute('aria-pressed',String(mysterySelected));
-    mysteryBtn.onclick=()=>{if(mysterySelected)clearMapMystery();else{if(state.questionSlot)clearQuestionMystery();state.map.mystery=true;const answer=state.map.name||'';if(answer)ensureMysteryAnswer(answer);else clearMysteryAnswer()}render();draw()};grid.appendChild(mysteryBtn);
+    mysteryBtn.onclick=()=>{if(mysterySelected)clearMapMystery();else{state.map.mystery=true;syncMysteryAnswers()}render();draw()};grid.appendChild(mysteryBtn);
     if(!maps.length){grid.insertAdjacentHTML('beforeend','<div class="loading">맵 데이터를 불러오는 중…</div>');return}
     if(!list.length){grid.insertAdjacentHTML('beforeend','<div class="empty-result">현재 필터에 맞는 맵이 없습니다.<br>전체 맵 탭에서 검색해 보세요.</div>');return}
     list.sort((a,b)=>mapKoName(a).localeCompare(mapKoName(b),'ko')).forEach(m=>{const mode=mapModeName(m);const preset=modePresetByName(mode);const img=mapImage(m);const ko=mapKoName(m);const btn=document.createElement('button');const selected=Boolean(img)&&state.map?.image===img;btn.className='card map-card';btn.classList.toggle('selected',selected&&!mysterySelected);btn.classList.toggle('mystery-answer-card',selected&&mysterySelected);btn.setAttribute('aria-pressed',String(selected));btn.innerHTML=`<img crossorigin="anonymous" src="${escAttr(img)}" alt=""><div class="label"><span class="mode-dot" style="background:${preset?.color||'#888'}"></span>${esc(ko)}</div><div class="sub-label">${esc(m.name||'')}</div>`;btn.onclick=()=>selectMap(m,draw);grid.appendChild(btn)})
@@ -555,7 +571,7 @@ function openMap(){
   function bindModeTabClick(fn){document.getElementById('modeTabs').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;activeMapMode=b.dataset.mode;document.getElementById('modeTabs').innerHTML=modeTabsHtml();bindModeTabClick(fn);fn()}}
   bindModeTabClick(draw);search.oninput=draw;draw();document.getElementById('clearMap').onclick=()=>{clearMapSelection();render();closeModal()};
 }
-function selectMap(m,after){const mode=mapModeName(m),p=modePresetByName(mode),image=mapImage(m),name=mapKoName(m),selected=Boolean(image)&&state.map?.image===image,mystery=Boolean(state.map?.mystery);if(selected){if(mystery){state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:true};clearMysteryAnswer()}else clearMapSelection()}else{state.map={name,image,modeName:p?.ko||mode||'',modeIcon:m?.gameMode?.imageUrl||p?.icon||'',modeColor:m?.gameMode?.color||p?.color||'#7138dc',mystery};if(mystery)ensureMysteryAnswer(name)}render();if(after)after()}
+function selectMap(m,after){const mode=mapModeName(m),p=modePresetByName(mode),image=mapImage(m),name=mapKoName(m),selected=Boolean(image)&&state.map?.image===image,mystery=Boolean(state.map?.mystery);if(selected){if(mystery)state.map={name:'',image:'',modeName:'',modeIcon:'',modeColor:'#7138dc',mystery:true};else clearMapSelection()}else state.map={name,image,modeName:p?.ko||mode||'',modeIcon:m?.gameMode?.imageUrl||p?.icon||'',modeColor:m?.gameMode?.color||p?.color||'#7138dc',mystery};syncMysteryAnswers();render();if(after)after()}
 
 function openMode(){
   openModal('모드 선택','모드에 따라 맵 이름 색상도 자동으로 바뀝니다.');
@@ -624,7 +640,7 @@ function escAttr(s){return esc(s)}
 async function loadBrawlers(){const urls=['https://api.brawlapi.com/v1/brawlers','https://brawlapi-v1.pages.dev/v1/brawlers'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){brawlers=list.filter(x=>x&&x.released!==false);brawlers.sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));renderQuizPanel();return}}catch(e){console.warn('brawlers',url,e)}}toast('브롤러 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
 async function loadMaps(){const urls=['https://api.brawlapi.com/v1/maps','https://brawlapi-v1.pages.dev/v1/maps'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){maps=list;return}}catch(e){console.warn('maps',url,e)}}toast('맵 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
 
-function quizState(){const c=safeClone(state);if(c.questionSlot&&c.slots[c.questionSlot])c.slots[c.questionSlot]=blankSlot();if(c.map?.mystery){c.map.name='미스테리 맵';c.map.image='';c.map.modeName='';c.map.modeIcon='';c.map.modeColor='#7138dc'}return c}
+function quizState(){const c=safeClone(state);(c.questionSlots||[]).forEach(k=>{if(c.slots[k])c.slots[k]=blankSlot()});if(c.map?.mystery){c.map.name='미스테리 맵';c.map.image='';c.map.modeName='';c.map.modeIcon='';c.map.modeColor='#7138dc'}return c}
 function waitForImageReady(img){
   if(img.complete)return img.decode?img.decode().catch(()=>{}):Promise.resolve();
   return new Promise(resolve=>{let done=false;const finish=()=>{if(done)return;done=true;resolve()};img.addEventListener('load',finish,{once:true});img.addEventListener('error',finish,{once:true});setTimeout(finish,8000)});
@@ -673,7 +689,7 @@ async function downloadPNG(){
   catch(e){console.error(e);alert('PNG 생성에 실패했습니다. 외부 팀 로고가 CORS를 허용하지 않는 경우 직접 업로드한 로고를 사용해 주세요.')}
   finally{exportHost?.remove()}
 }
-function swapSides(){[state.teams.left,state.teams.right]=[state.teams.right,state.teams.left];[['lg1','rg1'],['lg2','rg2'],['lb1','rb1'],['lb2','rb2'],['lb3','rb3'],['lp1','rp1'],['lp2','rp2'],['lp3','rp3']].forEach(([a,b])=>[state.slots[a],state.slots[b]]=[state.slots[b],state.slots[a]]);const q={lp1:'rp1',lp2:'rp2',lp3:'rp3',rp1:'lp1',rp2:'lp2',rp3:'lp3'};state.questionSlot=q[state.questionSlot]||state.questionSlot;render()}
+function swapSides(){[state.teams.left,state.teams.right]=[state.teams.right,state.teams.left];[['lg1','rg1'],['lg2','rg2'],['lb1','rb1'],['lb2','rb2'],['lb3','rb3'],['lp1','rp1'],['lp2','rp2'],['lp3','rp3']].forEach(([a,b])=>[state.slots[a],state.slots[b]]=[state.slots[b],state.slots[a]]);const q={lp1:'rp1',lp2:'rp2',lp3:'rp3',rp1:'lp1',rp2:'lp2',rp3:'lp3'};state.questionSlots=activeQuestionSlots().map(k=>q[k]||k);syncMysteryAnswers();render()}
 function resizePreview(){if(document.body.classList.contains('preview-mode')){const availableW=Math.max(300,innerWidth-32),s=Math.min(1,availableW/1920);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px';return}const maxW=Math.max(300,workspace.clientWidth-44);const s=Math.min(1,maxW/1920);canvasWrap.style.transform=`scale(${s})`;stage.style.width=1920*s+'px';stage.style.height=1080*s+'px'}
 
 canvas.addEventListener('click',e=>{if(document.body.classList.contains('preview-mode'))return;const slot=e.target.closest('[data-slot]');if(slot)return openBrawler(slot.dataset.slot);const team=e.target.closest('[data-team]');if(team)return openTeam(team.dataset.team);const edit=e.target.closest('[data-edit]');if(edit?.dataset.edit==='map')return openMap();if(edit?.dataset.edit==='mode')return openMode()});
