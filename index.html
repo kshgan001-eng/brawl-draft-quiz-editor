@@ -250,7 +250,7 @@ function normalizeMysteryAsset(value,target){
   if(target==='map')return{name,image:String(raw.image||''),modeName:String(raw.modeName||''),modeIcon:String(raw.modeIcon||''),modeColor:String(raw.modeColor||'#7138dc')};
   return{name,id:String(raw.id||''),image:String(raw.image||'')};
 }
-function uniqueMysteryAssets(values,target){const seen=new Set(),out=[];(Array.isArray(values)?values:[]).forEach(value=>{const asset=normalizeMysteryAsset(value,target);if(!asset)return;const key=target==='map'?normalize(asset.name):(asset.id?'id:'+asset.id:'name:'+normalize(asset.name));if(!key||seen.has(key))return;seen.add(key);out.push(asset)});return out}
+function uniqueMysteryAssets(values,target){const seen=new Set(),out=[];(Array.isArray(values)?values:[]).forEach(value=>{const asset=normalizeMysteryAsset(value,target);if(!asset)return;const key=target==='map'?(asset.image?'image:'+asset.image:'name:'+normalize(asset.name)):(asset.id?'id:'+asset.id:'name:'+normalize(asset.name));if(!key||seen.has(key))return;seen.add(key);out.push(asset)});return out}
 function hydrateState(raw){
   const base=blankState(),x=raw&&typeof raw==='object'?raw:{};
   const oldQuiz=x.quiz&&typeof x.quiz==='object'?x.quiz:{},oldCorrect=String(oldQuiz.correctAnswer||'').trim();
@@ -410,11 +410,11 @@ function mysteryTargetAssets(target){return uniqueMysteryAssets(state.mysteryAns
 function mysteryTargetAnswerNames(target){return mysteryTargetAssets(target).map(v=>v.name)}
 function activeMysteryAnswers(){return uniqueAnswers(activeMysteryTargets().flatMap(mysteryTargetAnswerNames))}
 function missingMysteryCount(){return activeMysteryTargets().filter(target=>mysteryTargetAssets(target).length===0).length}
-function mysteryAssetMatches(target,left,right){const a=normalizeMysteryAsset(left,target),b=normalizeMysteryAsset(right,target);if(!a||!b)return false;if(target!=='map'&&a.id&&b.id)return a.id===b.id;return normalize(a.name)===normalize(b.name)}
+function mysteryAssetMatches(target,left,right){const a=normalizeMysteryAsset(left,target),b=normalizeMysteryAsset(right,target);if(!a||!b)return false;if(target==='map'&&a.image&&b.image)return a.image===b.image;if(target!=='map'&&a.id&&b.id)return a.id===b.id;return normalize(a.name)===normalize(b.name)}
 function isMysteryTargetAnswer(target,value){return mysteryTargetAssets(target).some(answer=>mysteryAssetMatches(target,answer,value))}
 function resolveMysteryAsset(target,asset){
   const normalized=normalizeMysteryAsset(asset,target);if(!normalized)return null;
-  if(target==='map'){const found=maps.find(m=>normalize(mapKoName(m))===normalize(normalized.name));return found?{name:mapKoName(found),image:mapImage(found),modeName:modePresetByName(mapModeName(found))?.ko||mapModeName(found)||'',modeIcon:found?.gameMode?.imageUrl||modePresetByName(mapModeName(found))?.icon||'',modeColor:found?.gameMode?.color||modePresetByName(mapModeName(found))?.color||'#7138dc'}:normalized}
+  if(target==='map'){const found=maps.find(m=>normalized.image&&mapImage(m)===normalized.image)||maps.find(m=>normalize(mapKoName(m))===normalize(normalized.name));return found?{name:mapKoName(found),image:mapImage(found),modeName:modePresetByName(mapModeName(found))?.ko||mapModeName(found)||'',modeIcon:found?.gameMode?.imageUrl||modePresetByName(mapModeName(found))?.icon||'',modeColor:found?.gameMode?.color||modePresetByName(mapModeName(found))?.color||'#7138dc'}:normalized}
   const found=brawlers.find(b=>String(b?.id||'')===normalized.id||normalize(brawlerKoName(b))===normalize(normalized.name));return found?{name:brawlerKoName(found),id:String(found.id||''),image:brawlerImage(found)}:normalized;
 }
 function setMysteryTargetAssets(target,values){
