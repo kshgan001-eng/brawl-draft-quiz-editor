@@ -168,8 +168,15 @@ const BRAWLER_KO={
   'RICO':'리코','JESSIE':'제시','DYNAMIKE':'다이너마이크','DARRYL':'대릴','PENNY':'페니','TICK':'틱','CARL':'칼','8-BIT':'8비트','JACKY':'재키','GUS':'거스',
   'BO':'보','PIPER':'파이퍼','PAM':'팸','FRANK':'프랭크','BIBI':'비비','BEA':'비','EMZ':'엠즈','GALE':'게일','NANI':'나니','COLETTE':'콜레트','EDGAR':'에드거','STU':'스튜','BELLE':'벨','GROM':'그롬','GRIFF':'그리프','ASH':'애쉬','LOLA':'롤라','BONNIE':'보니','SAM':'샘','MANDY':'맨디','MAISIE':'메이지','HANK':'행크','PEARL':'펄','LARRY & LAWRIE':'래리 & 로리','ANGELO':'안젤로','BERRY':'베리','SHADE':'셰이드','MEEPLE':'미플','TRUNK':'트렁크','BOLT':'볼트',
   'MORTIS':'모티스','TARA':'타라','GENE':'진','MR. P':'미스터 P','MAX':'맥스','SPROUT':'스프라우트','LOU':'루','BYRON':'바이런','RUFFS':'러프스','COLONEL RUFFS':'러프스','SQUEAK':'스퀴크','BUZZ':'버즈','FANG':'팽','EVE':'이브','JANET':'자넷','OTIS':'오티스','BUSTER':'버스터','GRAY':'그레이','R-T':'R-T','WILLOW':'윌로우','DOUG':'더그','CHUCK':'척','CHARLIE':'찰리','MICO':'미코','MELODIE':'멜로디','LILY':'릴리','CLANCY':'클랜시','MOE':'모','JUJU':'주주','OLLIE':'올리','LUMI':'루미','FINX':'핑크스','JAE-YONG':'재용','JAE YONG':'재용','ALLI':'알리','MINA':'미나','ZIGGY':'지기','GIGI':'지지','GLOWY':'글로이','NAJIA':'나지아','DAMIAN':'데미안','STARR NOVA':'스타 노바','WENDY':'웬디',
-  'SPIKE':'스파이크','CROW':'크로우','LEON':'레온','SANDY':'샌디','SURGE':'서지','AMBER':'앰버','MEG':'메그','CHESTER':'체스터','CORDELIUS':'코델리우스','KIT':'키트','DRACO':'드라코','KENJI':'켄지','PIERCE':'피어스','NORI':'노리','KAZE':'카제','SIRIUS':'시리우스'
+  'SPIKE':'스파이크','CROW':'크로우','LEON':'레온','SANDY':'샌디','SURGE':'서지','AMBER':'앰버','MEG':'메그','CHESTER':'체스터','CORDELIUS':'코델리우스','KIT':'키트','DRACO':'드라코','KENJI':'켄지','PIERCE':'피어스','NORI':'노리','KAZE':'카제','SIRIUS':'시리우스',
+  'COSMO':'코스모','VINCE':'빈스','THUNDER FROGS':'선더 프로그','REY':'레이','RUBY':'루비'
 };
+// Officially announced in the November 2026 update, ahead of the live catalog.
+const ANNOUNCED_BRAWLERS=[
+  {id:16000111,name:'Thunder Frogs'},
+  {id:16000112,name:'Rey'},
+  {id:16000113,name:'Ruby'}
+];
 const MAP_KO={
   'CENTER STAGE':'센터 스테이지','PINBALL DREAMS':'핀볼 드림','PENALTY KICK':'승부차기','TRIPLE DRIBBLE':'트리플 드리블',
   'DOUBLE SWOOSH':'이중 곡선','HARD ROCK MINE':'암석 광산','LAST STOP':'종점','UNDERMINE':'흔들 광산',
@@ -237,6 +244,11 @@ const BRAWLER_PORTRAIT_ROOT='https://cdn.brawlify.com/brawlers/portraits/';
 function brawlerImage(b){return b?.id?`${BRAWLER_PORTRAIT_ROOT}${b.id}.png`:(b?.imageUrl2||b?.imageUrl||b?.imageUrl3||'')}
 function brawlerThumb(b){return brawlerImage(b)}
 function brawlerKoName(b){const raw=String(b?.name||'').trim();const key=raw.toUpperCase().replace(/’/g,"'");return BRAWLER_KO[key]||raw}
+function quizInputKey(value){
+  const key=normalize(value);
+  // Shared quizzes may still contain the old English labels.
+  return key==='cosmo'||key==='vince'?brawlerKoName({name:key}):key;
+}
 function brawlerUsedSlots(b,slots=ALL_SLOTS){const id=String(b?.id||''),names=new Set([normalize(b?.name),normalize(brawlerKoName(b))].filter(Boolean));return slots.filter(k=>{const picked=state.slots?.[k]||{};return id&&String(picked.id||'')===id||names.has(normalize(picked.name))})}
 function usageLabel(slots){const labels=[];if(slots.some(k=>GLOBAL_SLOTS.includes(k)))labels.push('글로벌 밴');if(slots.some(k=>BAN_SLOTS.includes(k)))labels.push('밴');if(slots.some(k=>PICK_SLOTS.includes(k)))labels.push('픽');return labels.join(' · ')}
 function mapKoName(m){const raw=String(m?.name||'').trim();return MAP_KO[raw.toUpperCase().replace(/’/g,"'")]||raw}
@@ -415,7 +427,9 @@ function isMysteryTargetAnswer(target,value){return mysteryTargetAssets(target).
 function resolveMysteryAsset(target,asset){
   const normalized=normalizeMysteryAsset(asset,target);if(!normalized)return null;
   if(target==='map'){const found=maps.find(m=>normalized.image&&mapImage(m)===normalized.image)||maps.find(m=>normalize(mapKoName(m))===normalize(normalized.name));return found?{name:mapKoName(found),image:mapImage(found),modeName:modePresetByName(mapModeName(found))?.ko||mapModeName(found)||'',modeIcon:found?.gameMode?.imageUrl||modePresetByName(mapModeName(found))?.icon||'',modeColor:found?.gameMode?.color||modePresetByName(mapModeName(found))?.color||'#7138dc'}:normalized}
-  const found=brawlers.find(b=>String(b?.id||'')===normalized.id||normalize(brawlerKoName(b))===normalize(normalized.name));return found?{name:brawlerKoName(found),id:String(found.id||''),image:brawlerImage(found)}:normalized;
+  const key=normalize(normalized.name);
+  const found=brawlers.find(b=>String(b?.id||'')===normalized.id||normalize(brawlerKoName(b))===key||normalize(b.name)===key);
+  return found?{name:brawlerKoName(found),id:String(found.id||''),image:brawlerImage(found)}:normalized;
 }
 function setMysteryTargetAssets(target,values){
   state.mysteryAnswersByTarget=state.mysteryAnswersByTarget&&typeof state.mysteryAnswersByTarget==='object'?state.mysteryAnswersByTarget:{};const next=uniqueMysteryAssets(values,target);
@@ -502,7 +516,7 @@ function renderQuizSolver(panel){
   bindQuizPortraitErrors(panel);
   panel.querySelectorAll('[data-quiz-choice]').forEach(btn=>btn.onclick=()=>{if(quizRevealed)return;quizSelectedAnswer=btn.dataset.quizChoice||'';quizResultCorrect=answers.some(v=>normalize(v)===normalize(quizSelectedAnswer));quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()});
   const answerInput=document.getElementById('quizAnswerInput');if(answerInput&&!quizRevealed){answerInput.oninput=()=>{quizSelectedAnswer=answerInput.value};answerInput.onkeydown=e=>{if(e.key==='Enter')document.getElementById('quizSubmit')?.click()};bindBrawlerAutocomplete(answerInput,document.getElementById('quizSolverSuggestions'),value=>{quizSelectedAnswer=value})}
-  const submit=document.getElementById('quizSubmit');if(submit&&!quizRevealed)submit.onclick=()=>{if(!String(quizSelectedAnswer).trim()){toast('정답을 입력해 주세요.');return}quizResultCorrect=answers.some(answer=>normalize(quizSelectedAnswer)===normalize(answer));quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()};
+  const submit=document.getElementById('quizSubmit');if(submit&&!quizRevealed)submit.onclick=()=>{if(!String(quizSelectedAnswer).trim()){toast('정답을 입력해 주세요.');return}const key=quizInputKey(quizSelectedAnswer);quizResultCorrect=answers.some(answer=>quizInputKey(answer)===key);quizResultText=randomItem(quizResultCorrect?QUIZ_CORRECT_MESSAGES:QUIZ_WRONG_MESSAGES);quizRevealed=true;renderQuizPanel()};
 }
 function renderQuizPanel(){const panel=document.getElementById('quizPanel'),preview=document.body.classList.contains('preview-mode'),show=preview?Boolean(state.quiz?.enabled||mysteryActive()):Boolean(state.quiz?.enabled);panel.classList.toggle('show',show);if(!show){panel.innerHTML='';return}if(preview)renderQuizSolver(panel);else renderQuizEditor(panel)}
 
@@ -685,7 +699,29 @@ function resizeUpload(file){return new Promise((resolve,reject)=>{const img=new 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function escAttr(s){return esc(s)}
 
-async function loadBrawlers(){const urls=['https://api.brawlapi.com/v1/brawlers','https://brawlapi-v1.pages.dev/v1/brawlers'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){brawlers=list.filter(x=>x&&x.released!==false);brawlers.sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));renderQuizPanel();return}}catch(e){console.warn('brawlers',url,e)}}toast('브롤러 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
+function mergeBrawlerCatalog(list){
+  const roster=new Map(ANNOUNCED_BRAWLERS.map(brawler=>[String(brawler.id),brawler]));
+  for(const brawler of list){
+    if(brawler?.id&&brawler.released!==false)roster.set(String(brawler.id),brawler);
+  }
+  return [...roster.values()].sort((a,b)=>brawlerKoName(a).localeCompare(brawlerKoName(b),'ko'));
+}
+async function loadBrawlers(){
+  const urls=['https://api.brawlapi.com/v1/brawlers','https://brawlapi-v1.pages.dev/v1/brawlers'];
+  for(const url of urls){
+    try{
+      const response=await fetch(url,{cache:'default'});
+      if(!response.ok)continue;
+      const data=await response.json();
+      const list=Array.isArray(data)?data:data?.list;
+      if(!Array.isArray(list)||!list.length)continue;
+      brawlers=mergeBrawlerCatalog(list);
+      renderQuizPanel();
+      return;
+    }catch(error){console.warn('brawlers',url,error)}
+  }
+  toast('브롤러 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.');
+}
 async function loadMaps(){const urls=['https://api.brawlapi.com/v1/maps','https://brawlapi-v1.pages.dev/v1/maps'];for(const url of urls){try{const r=await fetch(url,{cache:'default'});if(!r.ok)continue;const j=await r.json();const list=Array.isArray(j.list)?j.list:Array.isArray(j)?j:[];if(list.length){maps=list;return}}catch(e){console.warn('maps',url,e)}}toast('맵 목록 연결에 실패했습니다. 네트워크 상태를 확인해 주세요.')}
 
 function quizState(){const c=safeClone(state);(c.questionSlots||[]).forEach(k=>{if(c.slots[k])c.slots[k]=blankSlot()});if(c.map?.mystery){c.map.name='미스테리 맵';c.map.image='';c.map.modeName='';c.map.modeIcon='';c.map.modeColor='#7138dc'}return c}
